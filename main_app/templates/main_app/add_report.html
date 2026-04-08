@@ -1,0 +1,22 @@
+<h1>
+    {% if form.instance.id %}
+        Edit Laporan
+    {% else %}
+        Tambah Laporan
+    {% endif %}
+</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">
+        {% if form.instance.id %}
+            Update
+        {% else %}
+            Simpan
+        {% endif %}
+    </button>
+</form>
+
+<a href="/">Kembali</a>

@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'iet_24782084_2026.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smartcitydavin_db',
+        'USER': 'postgres',
+        'PASSWORD': 'davin1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
