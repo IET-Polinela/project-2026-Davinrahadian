@@ -1,16 +1,14 @@
-<h1>Daftar Laporan</h1>
+{% extends 'base.html' %}
 
-<a href="{% url 'add_report' %}">Tambah Laporan</a>
+{% block content %}
+<h2>🏠 Welcome to Smart City Reporting</h2>
 
-<ul>
-{% for report in reports %}
-    <li>
-        <b>{{ report.title }}</b> - {{ report.category }} <br>
-        {{ report.description }} <br>
-        {{ report.location }} <br>
+<p>
+Laporkan masalah kota dengan mudah dan cepat.
+</p>
 
-        <a href="{% url 'update_report' report.id %}">Edit</a>
-        <a href="{% url 'delete_report' report.id %}">Delete</a>
-    </li>
-{% endfor %}
-</ul>
+<a href="#" style="background:#1abc9c;color:white;padding:10px;border-radius:5px;text-decoration:none;">
+    ➕ Buat Laporan
+</a>
+
+{% endblock %}

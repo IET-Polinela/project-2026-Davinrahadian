@@ -1,91 +1,62 @@
-<<<<<<< HEAD
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Report
 from .forms import ReportForm
+from .models import Report
 
-# READ
-def home(request):
+# LIST REPORT
+def report_list(request):
     reports = Report.objects.all()
-    return render(request, 'main_app/home.html', {'reports': reports})
+    return render(request, 'main_app/report_list.html', {'reports': reports})
 
-# CREATE
+# ADD REPORT
 def add_report(request):
-    if request.method == "POST":
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+
+        Report.objects.create(
+            title=title,
+            description=description,
+            status='Pending'
+        )
+        return redirect('report_list')
+
+    return render(request, 'main_app/add_report.html')
+def create_report(request):
+    if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('report_list')
     else:
         form = ReportForm()
-    return render(request, 'main_app/add_report.html', {'form': form})
+    return render(request, 'main_app/report_form.html', {'form': form})
 
-# UPDATE
+
+def report_detail(request, id):
+    report = get_object_or_404(Report, id=id)
+    return render(request, 'main_app/report_detail.html', {'object': report})
+
+
 def update_report(request, id):
     report = get_object_or_404(Report, id=id)
-    form = ReportForm(request.POST or None, instance=report)
-
-    if form.is_valid():
-        form.save()
-        return redirect('home')
-
+    if request.method == 'POST':
+        form = ReportForm(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            return redirect('report_list')
+    else:
+        form = ReportForm(instance=report)
     return render(request, 'main_app/update_report.html', {'form': form})
 
-# DELETE
+
 def delete_report(request, id):
     report = get_object_or_404(Report, id=id)
-    report.delete()
-    return redirect('home')
-=======
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.views import View
-from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
-
-from .models import Report
-
-
-# ================== LIST (READ) ==================
-class ReportListView(ListView):
-    model = Report
-    template_name = 'main_app/report_list.html'
-    context_object_name = 'reports'
-
-
-# ================== DETAIL ==================
-class ReportDetailView(DetailView):
-    model = Report
-    template_name = 'main_app/report_detail.html'
-
-
-# ================== CREATE ==================
-class ReportCreateView(CreateView):
-    model = Report
-    fields = ['title', 'category', 'description', 'location']
-    template_name = 'main_app/report_form.html'
-    success_url = reverse_lazy('report_list')
-
-
-# ================== UPDATE ==================
-class ReportUpdateView(UpdateView):
-    model = Report
-    fields = ['title', 'category', 'description', 'location']
-    template_name = 'main_app/report_form.html'
-    success_url = reverse_lazy('report_list')
-
-
-# ================== DELETE ==================
-class ReportDeleteView(DeleteView):
-    model = Report
-    template_name = 'main_app/report_confirm_delete.html'
-    success_url = reverse_lazy('report_list')
-
-
-# ================== UPDATE STATUS (WORKFLOW) ==================
-class ReportUpdateStatusView(View):
-    def post(self, request, pk):
-        report = get_object_or_404(Report, pk=pk)
-        new_status = request.POST.get('status')
-        report.status = new_status
-        report.save()
+    if request.method == 'POST':
+        report.delete()
         return redirect('report_list')
->>>>>>> 8426490 (Labsession4)
+    return render(request, 'main_app/report_confirm_delete.html', {'object': report})
+
+def home(request):
+    return render(request, 'main_app/home.html')

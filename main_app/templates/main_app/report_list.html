@@ -1,27 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Report List</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h1>Daftar Laporan</h1>
+{% block content %}
+<h2>📋 Daftar Laporan</h2>
 
-<a href="{% url 'report_create' %}">+ Tambah Laporan</a>
+<a href="{% url 'add_report' %}" 
+style="background:#1abc9c;color:white;padding:8px;border-radius:5px;text-decoration:none;">
+➕ Tambah Laporan
+</a>
 
-<ul>
+<br><br>
+
+<table border="1" cellpadding="10" style="border-collapse: collapse; width:100%;">
+    <tr style="background:#eee;">
+        <th>Judul</th>
+        <th>Deskripsi</th>
+        <th>Status</th>
+    </tr>
+
     {% for report in reports %}
-        <li>
-            <b>{{ report.title }}</b> - {{ report.status }}
-            <br>
-            <a href="{% url 'report_detail' report.pk %}">Detail</a>
-            <a href="{% url 'report_update' report.pk %}">Edit</a>
-            <a href="{% url 'report_delete' report.pk %}">Delete</a>
-        </li>
+    <tr>
+        <td>{{ report.title }}</td>
+        <td>{{ report.description }}</td>
+        <td>{{ report.status }}</td>
+    </tr>
     {% empty %}
-        <li>Tidak ada laporan</li>
+    <tr>
+        <td colspan="3">Belum ada laporan</td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
 
-</body>
-</html>
+{% endblock %}

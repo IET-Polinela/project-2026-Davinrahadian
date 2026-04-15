@@ -1,26 +1,14 @@
-<h2>Detail Laporan</h2>
+{% extends 'base.html' %}
+{% block content %}
+<h2>Isi halaman kamu</h2>
+{% endblock %}
 
-<p><strong>Title:</strong> {{ object.title }}</p>
-<p><strong>Category:</strong> {{ object.category }}</p>
-<p><strong>Description:</strong> {{ object.description }}</p>
-<p><strong>Location:</strong> {{ object.location }}</p>
-<p><strong>Status:</strong> {{ object.status }}</p>
+<h1>Detail Report</h1>
 
-<hr>
+<p><b>Title:</b> {{ object.title }}</p>
+<p><b>Category:</b> {{ object.category }}</p>
+<p><b>Description:</b> {{ object.description }}</p>
+<p><b>Location:</b> {{ object.location }}</p>
+<p><b>Status:</b> {{ object.status }}</p>
 
-<h3>Ubah Status</h3>
-
-<form method="post" action="{% url 'update_status' object.id %}">
-    {% csrf_token %}
-    
-    <select name="status">
-        <option value="REPORTED">REPORTED</option>
-        <option value="IN_PROGRESS">IN PROGRESS</option>
-        <option value="RESOLVED">RESOLVED</option>
-    </select>
-    
-    <button type="submit">Update Status</button>
-</form>
-
-<br>
-<a href="/">Kembali</a>
+<a href="{% url 'report_list' %}">Kembali</a>
