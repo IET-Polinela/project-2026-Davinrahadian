@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center">📊 Dashboard Smart City</h2>
+
+    <div class="row text-center">
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow p-3 bg-primary text-white">
+                <h5>Total Laporan</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow p-3 bg-secondary text-white">
+                <h5>Reported</h5>
+                <h2>{{ reported }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow p-3 bg-info text-white">
+                <h5>Verified</h5>
+                <h2>{{ verified }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow p-3 bg-warning text-dark">
+                <h5>In Progress</h5>
+                <h2>{{ in_progress }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow p-3 bg-success text-white">
+                <h5>Resolved</h5>
+                <h2>{{ resolved }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

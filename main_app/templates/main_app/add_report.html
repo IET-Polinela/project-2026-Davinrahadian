@@ -1,18 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>➕ Tambah Laporan</h2>
+<h2 class="mb-4">➕ Tambah Laporan</h2>
 
-<form method="POST">
-    {% csrf_token %}
-    
-    <label>Judul:</label><br>
-    <input type="text" name="title" required><br><br>
+<div class="card shadow-sm p-4">
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Judul -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Judul</label>
+            <input 
+                type="text" 
+                name="title" 
+                class="form-control" 
+                placeholder="Masukkan judul laporan"
+                required
+            >
+        </div>
 
-    <label>Deskripsi:</label><br>
-    <textarea name="description" required></textarea><br><br>
+        <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/reports/">Reports</a></li>
+    <li class="breadcrumb-item active">Tambah</li>
+  </ol>
+</nav>
 
-    <button type="submit">Simpan</button>
-</form>
+        <!-- Deskripsi -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Deskripsi</label>
+            <textarea 
+                name="description" 
+                class="form-control" 
+                rows="4"
+                placeholder="Masukkan deskripsi laporan"
+                required
+            ></textarea>
+        </div>
+
+        <!-- Tombol -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                💾 Simpan
+            </button>
+
+            <a href="{% url 'report_list' %}" class="btn btn-secondary">
+                ⬅️ Kembali
+            </a>
+        </div>
+    </form>
+</div>
 
 {% endblock %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/reports/">Reports</a></li>
+    <li class="breadcrumb-item active">Tambah</li>
+  </ol>
+</nav>

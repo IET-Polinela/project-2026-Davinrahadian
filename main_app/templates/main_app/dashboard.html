@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center">📊 Dashboard Smart City</h2>
+
+    <div class="alert alert-primary text-center">
+    📡 Real-time Dashboard Smart City System
+</div>
+
+    <!-- ================= CARD ================= -->
+    <div class="row text-center">
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3 bg-primary text-white">
+                <h5>Total Laporan</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3 bg-secondary text-white">
+                <h5>Reported</h5>
+                <h2>{{ reported }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3 bg-info text-white">
+                <h5>Verified</h5>
+                <h2>{{ verified }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3 bg-warning text-dark">
+                <h5>In Progress</h5>
+                <h2>{{ in_progress }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3 bg-success text-white">
+                <h5>Resolved</h5>
+                <h2>{{ resolved }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= CHART ================= -->
+    <div class="card shadow p-4 mt-4">
+        <h5 class="text-center mb-3">📊 Grafik Status Laporan</h5>
+        <canvas id="reportChart"></canvas>
+    </div>
+
+</div>
+
+<!-- ================= CHART JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // convert Django variable ke JS aman (anti merah)
+    const reported = "{{ reported }}";
+    const verified = "{{ verified }}";
+    const in_progress = "{{ in_progress }}";
+    const resolved = "{{ resolved }}";
+
+    const ctx = document.getElementById('reportChart');
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Reported', 'Verified', 'In Progress', 'Resolved'],
+            datasets: [{
+                data: [
+                    parseInt(reported),
+                    parseInt(verified),
+                    parseInt(in_progress),
+                    parseInt(resolved)
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}
