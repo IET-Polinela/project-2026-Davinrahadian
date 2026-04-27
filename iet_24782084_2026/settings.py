@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'main_app',
     'about',
     'contacts',
+    'usermanagement_24782084'
 ]
+AUTH_USER_MODEL = 'usermanagement_24782084.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,7 +81,7 @@ WSGI_APPLICATION = 'iet_24782084_2026.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartcitydavin_db',
+        'NAME': 'smartcity_db',
         'USER': 'postgres',
         'PASSWORD': 'davin1234',
         'HOST': 'localhost',
@@ -122,3 +125,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+LOGIN_REDIRECT_URL = 'report_list' # Sesuaikan dengan nama URL daftar laporan kamu
+LOGOUT_REDIRECT_URL = 'login'
+AUTH_USER_MODEL = 'usermanagement_24782084.User'
+

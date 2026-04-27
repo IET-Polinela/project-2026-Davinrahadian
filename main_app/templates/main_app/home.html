@@ -7,8 +7,22 @@
 Laporkan masalah kota dengan mudah dan cepat.
 </p>
 
-<a href="#" style="background:#1abc9c;color:white;padding:10px;border-radius:5px;text-decoration:none;">
-    ➕ Buat Laporan
-</a>
+<div class="d-flex gap-2">
+    {% if user.is_authenticated %}
+        <a href="{% url 'add_report' %}" class="btn btn-success">
+            ➕ Buat Laporan
+        </a>
+        <a href="{% url 'report_list' %}" class="btn btn-info">
+            📋 Lihat Laporan
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">
+            🔐 Login
+        </a>
+        <a href="{% url 'register' %}" class="btn btn-success">
+            ✍️ Daftar Citizen
+        </a>
+    {% endif %}
+</div>
 
 {% endblock %}

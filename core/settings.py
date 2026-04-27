@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'main_app',   # ← WAJIB ADA
     'about',
     'contacts',
+    'usermanagement_24782084',
 ]
 
 
@@ -119,3 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Login redirect URL
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'

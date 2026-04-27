@@ -1,134 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card shadow p-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="m-0">Daftar Laporan</h2>
+    <a href="{% url 'create_report' %}" class="btn btn-success btn-sm">+ Tambah Laporan</a>
+</div>
 
-    <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">Reports</li>
-  </ol>
-</nav>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>📋 Daftar Laporan</h2>
-
-        <a href="{% url 'add_report' %}" class="btn btn-success">
-            ➕ Tambah Laporan
-        </a>
-    </div>
-
-    {% if reports %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th>Judul</th>
-                    <th>Deskripsi</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for report in reports %}
-                <tr>
-                    <td class="fw-bold">{{ report.title }}</td>
-                    <td>{{ report.description }}</td>
-
-                    <!-- STATUS BADGE -->
-                    <td>
-                        {% if report.status == 'REPORTED' %}
-                            <span class="badge bg-secondary">Reported</span>
-                        {% elif report.status == 'VERIFIED' %}
-                            <span class="badge bg-primary">Verified</span>
-                        {% elif report.status == 'IN_PROGRESS' %}
-                            <span class="badge bg-warning text-dark">In Progress</span>
-                        {% elif report.status == 'RESOLVED' %}
-                            <span class="badge bg-success">Resolved</span>
-                        {% endif %}
-                    </td>
-
-                    <!-- AKSI -->
-                    <td>
-
-                        <!-- WORKFLOW BUTTON -->
-                        {% if report.status == 'REPORTED' %}
-                            <form action="{% url 'update_status' report.id %}" method="POST" style="display:inline;">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-info"
-                                        onclick="this.innerHTML='Loading...'; this.disabled=true;">
-                                    ✔️ Verifikasi
-                                </button>
-                            </form>
-
-                        {% elif report.status == 'VERIFIED' %}
-                            <form action="{% url 'update_status' report.id %}" method="POST" style="display:inline;">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-warning"
-                                        onclick="this.innerHTML='Loading...'; this.disabled=true;">
-                                    ⚙️ Proses
-                                </button>
-                            </form>
-
-                        {% elif report.status == 'IN_PROGRESS' %}
-                            <form action="{% url 'update_status' report.id %}" method="POST" style="display:inline;">
-                                {% csrf_token %}
-                                <button class="btn btn-sm btn-success"
-                                        onclick="this.innerHTML='Loading...'; this.disabled=true;">
-                                    ✅ Selesaikan
-                                </button>
-                            </form>
-                        {% endif %}
-
-                        <!-- EDIT -->
-                        <a href="{% url 'update_report' report.id %}" class="btn btn-sm btn-primary">
-                            ✏️ Edit
-                        </a>
-
-                        <!-- DELETE -->
-                        <form action="{% url 'delete_report' report.id %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <button class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Yakin mau hapus laporan ini?')">
-                                🗑️ Hapus
-                            </button>
-                        </form>
-
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% else %}
-    <div class="alert alert-info text-center">
-        Belum ada laporan <br><br>
-        <a href="{% url 'add_report' %}" class="btn btn-success">
-            ➕ Tambah Laporan
-        </a>
-    </div>
-    {% endif %}
-
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-primary">
+            <tr>
+                <th>Judul</th>
+                <th>Deskripsi</th>
+                <th>Lokasi</th>
+                <th style="width: 220px;">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in reports %}
+            <tr>
+                <td class="fw-semibold">{{ report.title }}</td>
+                <td>{{ report.description }}</td>
+                <td>{{ report.location }}</td>
+                <td class="d-flex gap-2">
+                    <a href="{% url 'report_detail' report.id %}" class="btn btn-outline-primary btn-sm">View</a>
+                    <a href="{% url 'update_report' report.id %}" class="btn btn-outline-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_report' report.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-4">Belum ada laporan</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
-<button class="btn btn-sm btn-info"
-        onclick="return confirm('Ubah status ke VERIFIED?')">
-    ✔️ Verifikasi
-</button>
-<button class="btn btn-sm btn-warning"
-        onclick="return confirm('Ubah status ke IN PROGRESS?')">
-    ⚙️ Proses
-</button>
-<button class="btn btn-sm btn-success"
-        onclick="return confirm('Tandai sebagai SELESAI?')">
-    ✅ Selesaikan
-</button>
-
-<nav aria-label="breadcrumb" class="mb-3">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Home</a></li>
-    <li class="breadcrumb-item active">Reports</li>
-  </ol>
-</nav>

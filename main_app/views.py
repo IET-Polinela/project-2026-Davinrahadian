@@ -3,9 +3,25 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Report
 from .forms import ReportForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from django.views.decorators.http import require_POST
 
+
+def admin_required(view_func):
+    @login_required
+    def _wrapped(request, *args, **kwargs):
+        user = request.user
+        if getattr(user, 'is_admin', False) or getattr(user, 'is_superuser', False):
+            return view_func(request, *args, **kwargs)
+
+        messages.error(request, 'Akses ditolak: fitur ini khusus admin.')
+        return redirect(request.META.get('HTTP_REFERER') or 'report_list')
+
+    return _wrapped
+
+
+@admin_required
 @require_POST
 def update_status(request, id):
     report = get_object_or_404(Report, id=id)
@@ -25,6 +41,7 @@ def update_status(request, id):
 # =========================
 # LIST REPORT
 # =========================
+@login_required
 def report_list(request):
     reports = Report.objects.all()
     return render(request, 'main_app/report_list.html', {'reports': reports})
@@ -33,6 +50,7 @@ def report_list(request):
 # =========================
 # ADD REPORT (manual form)
 # =========================
+@login_required
 def add_report(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -53,6 +71,7 @@ def add_report(request):
 # =========================
 # CREATE REPORT (ModelForm)
 # =========================
+@login_required
 def create_report(request):
     if request.method == 'POST':
         form = ReportForm(request.POST)
@@ -69,6 +88,7 @@ def create_report(request):
 # =========================
 # DETAIL
 # =========================
+@login_required
 def report_detail(request, id):
     report = get_object_or_404(Report, id=id)
     return render(request, 'main_app/report_detail.html', {'object': report})
@@ -77,6 +97,7 @@ def report_detail(request, id):
 # =========================
 # UPDATE
 # =========================
+@admin_required
 def update_report(request, id):
     report = get_object_or_404(Report, id=id)
 
@@ -95,6 +116,7 @@ def update_report(request, id):
 # =========================
 # DELETE
 # =========================
+@admin_required
 def delete_report(request, id):
     report = get_object_or_404(Report, id=id)
 
@@ -116,6 +138,7 @@ def home(request):
 # =========================
 # DASHBOARD (UPDATED STATUS)
 # =========================
+@admin_required
 def dashboard(request):
     total = Report.objects.count()
     reported = Report.objects.filter(status='REPORTED').count()
