@@ -1,28 +1,520 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>🏠 Welcome to Smart City Reporting</h2>
+<style>
+    .home-hero {
+        background:
+            linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(37, 99, 235, 0.92)),
+            radial-gradient(circle at 78% 12%, rgba(255, 255, 255, 0.26), transparent 28%),
+            linear-gradient(180deg, #0f766e, #2563eb);
+        border-radius: 8px;
+        color: #fff;
+        min-height: 560px;
+        overflow: hidden;
+        padding: 38px;
+        position: relative;
+    }
 
-<p>
-Laporkan masalah kota dengan mudah dan cepat.
-</p>
+    .home-hero::before {
+        animation: gridDrift 18s linear infinite;
+        background:
+            linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+            linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+        background-size: 56px 56px;
+        content: "";
+        inset: 0;
+        opacity: 0.28;
+        position: absolute;
+    }
 
-<div class="d-flex gap-2">
-    {% if user.is_authenticated %}
-        <a href="{% url 'add_report' %}" class="btn btn-success">
-            ➕ Buat Laporan
-        </a>
-        <a href="{% url 'report_list' %}" class="btn btn-info">
-            📋 Lihat Laporan
-        </a>
-    {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary">
-            🔐 Login
-        </a>
-        <a href="{% url 'register' %}" class="btn btn-success">
-            ✍️ Daftar Citizen
-        </a>
-    {% endif %}
-</div>
+    .home-hero::after {
+        background:
+            linear-gradient(to top, rgba(15, 23, 42, 0.42), transparent 76%),
+            repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 22px, transparent 22px 36px);
+        bottom: 0;
+        content: "";
+        height: 132px;
+        left: 0;
+        opacity: 0.56;
+        position: absolute;
+        right: 0;
+    }
 
+    .home-layout {
+        align-items: center;
+        display: grid;
+        gap: 28px;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        min-height: 390px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .home-hero-content {
+        max-width: 720px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .home-kicker {
+        color: rgba(255, 255, 255, 0.76);
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+    }
+
+    .home-title {
+        font-size: clamp(2rem, 5vw, 4.25rem);
+        font-weight: 900;
+        letter-spacing: 0;
+        line-height: 1.04;
+        margin: 0;
+    }
+
+    .home-copy {
+        color: rgba(255, 255, 255, 0.84);
+        font-size: 1.12rem;
+        line-height: 1.7;
+        margin: 18px 0 0;
+        max-width: 590px;
+    }
+
+    .home-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .home-actions .btn {
+        border-radius: 999px;
+        font-weight: 800;
+        padding: 11px 18px;
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .home-actions .btn:hover {
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+        transform: translateY(-2px);
+    }
+
+    .home-live-badge {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        color: rgba(255, 255, 255, 0.88);
+        display: inline-flex;
+        font-size: 0.82rem;
+        font-weight: 800;
+        gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .home-live-badge::before {
+        animation: pulseDot 1.6s ease-in-out infinite;
+        background: #86efac;
+        border-radius: 999px;
+        box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.55);
+        content: "";
+        height: 8px;
+        width: 8px;
+    }
+
+    .city-panel {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 8px;
+        box-shadow: 0 24px 54px rgba(15, 23, 42, 0.2);
+        min-height: 330px;
+        overflow: hidden;
+        padding: 18px;
+        position: relative;
+    }
+
+    .city-panel::before {
+        animation: scanMove 4.8s ease-in-out infinite;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+        content: "";
+        height: 100%;
+        left: -44%;
+        position: absolute;
+        top: 0;
+        transform: skewX(-16deg);
+        width: 36%;
+    }
+
+    .city-panel-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .city-panel-title {
+        font-size: 0.82rem;
+        font-weight: 900;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .city-panel-time {
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .city-map {
+        height: 170px;
+        margin-top: 18px;
+        position: relative;
+    }
+
+    .road {
+        background: rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        height: 8px;
+        position: absolute;
+        transform-origin: left;
+    }
+
+    .road-one {
+        left: 12%;
+        top: 42%;
+        transform: rotate(18deg);
+        width: 72%;
+    }
+
+    .road-two {
+        left: 8%;
+        top: 68%;
+        transform: rotate(-10deg);
+        width: 84%;
+    }
+
+    .road-three {
+        left: 46%;
+        top: 14%;
+        transform: rotate(88deg);
+        width: 54%;
+    }
+
+    .map-node {
+        align-items: center;
+        animation: nodeFloat 3.2s ease-in-out infinite;
+        background: #fff;
+        border-radius: 999px;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.2);
+        color: #2563eb;
+        display: flex;
+        font-size: 0.8rem;
+        font-weight: 900;
+        height: 38px;
+        justify-content: center;
+        position: absolute;
+        width: 38px;
+    }
+
+    .map-node:nth-of-type(4) {
+        animation-delay: 0.3s;
+        left: 18%;
+        top: 28%;
+    }
+
+    .map-node:nth-of-type(5) {
+        animation-delay: 0.8s;
+        left: 58%;
+        top: 10%;
+    }
+
+    .map-node:nth-of-type(6) {
+        animation-delay: 1.1s;
+        left: 72%;
+        top: 62%;
+    }
+
+    .workflow-card {
+        background: rgba(15, 23, 42, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .workflow-step {
+        align-items: center;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 30px minmax(0, 1fr) auto;
+    }
+
+    .step-dot {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 0.72rem;
+        font-weight: 900;
+        height: 30px;
+        justify-content: center;
+        width: 30px;
+    }
+
+    .workflow-step strong {
+        display: block;
+        font-size: 0.88rem;
+        line-height: 1.1;
+    }
+
+    .workflow-step span {
+        color: rgba(255, 255, 255, 0.68);
+        display: block;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin-top: 2px;
+    }
+
+    .step-status {
+        background: rgba(134, 239, 172, 0.18);
+        border-radius: 999px;
+        color: #bbf7d0;
+        font-size: 0.7rem;
+        font-weight: 900;
+        padding: 5px 8px;
+    }
+
+    .home-stat-row {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-top: 28px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .home-stat {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 16px;
+        transform: translateY(0);
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .home-stat:hover {
+        background: rgba(255, 255, 255, 0.18);
+        transform: translateY(-4px);
+    }
+
+    .home-stat-icon {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+        display: flex;
+        font-size: 1.05rem;
+        font-weight: 900;
+        height: 36px;
+        justify-content: center;
+        margin-bottom: 14px;
+        width: 36px;
+    }
+
+    .home-stat strong {
+        display: block;
+        font-size: 1.28rem;
+        line-height: 1;
+    }
+
+    .home-stat span {
+        color: rgba(255, 255, 255, 0.74);
+        display: block;
+        font-size: 0.86rem;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .animate-rise {
+        animation: riseIn 0.72s ease both;
+        animation-delay: var(--delay, 0s);
+    }
+
+    @media (max-width: 767.98px) {
+        .home-hero {
+            min-height: 0;
+            padding: 24px;
+        }
+
+        .home-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .city-panel {
+            min-height: 300px;
+        }
+
+        .home-stat-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .home-hero::before,
+        .home-live-badge::before,
+        .city-panel::before,
+        .map-node,
+        .animate-rise {
+            animation: none;
+        }
+
+        .home-actions .btn:hover,
+        .home-stat:hover {
+            transform: none;
+        }
+    }
+
+    @keyframes riseIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes gridDrift {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 56px 56px;
+        }
+    }
+
+    @keyframes pulseDot {
+        0% {
+            box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.55);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(134, 239, 172, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(134, 239, 172, 0);
+        }
+    }
+
+    @keyframes scanMove {
+        0%, 42% {
+            left: -44%;
+            opacity: 0;
+        }
+        56% {
+            opacity: 0.75;
+        }
+        100% {
+            left: 112%;
+            opacity: 0;
+        }
+    }
+
+    @keyframes nodeFloat {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+</style>
+
+<section class="home-hero">
+    <div class="home-layout">
+        <div class="home-hero-content animate-rise">
+            <div class="home-live-badge">Smart City Command Center</div>
+            <p class="home-kicker mt-4">IET Smart City</p>
+            <h1 class="home-title">Welcome to Smart City Reporting</h1>
+            <p class="home-copy">Laporkan masalah kota dengan mudah dan cepat, lalu pantau proses penanganannya dari satu sistem yang rapi, transparan, dan mudah dipakai.</p>
+
+            <div class="home-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_report' %}" class="btn btn-light text-primary">Buat Laporan</a>
+                    <a href="{% url 'report_list' %}" class="btn btn-outline-light">Lihat Laporan</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-light text-primary">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-light">Daftar Citizen</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="city-panel animate-rise" style="--delay: 0.14s;">
+            <div class="city-panel-header">
+                <p class="city-panel-title">Live Report Flow</p>
+                <span class="city-panel-time">Today</span>
+            </div>
+
+            <div class="city-map" aria-hidden="true">
+                <span class="road road-one"></span>
+                <span class="road road-two"></span>
+                <span class="road road-three"></span>
+                <span class="map-node">01</span>
+                <span class="map-node">02</span>
+                <span class="map-node">03</span>
+            </div>
+
+            <div class="workflow-card">
+                <div class="workflow-step">
+                    <span class="step-dot">1</span>
+                    <div>
+                        <strong>Report masuk</strong>
+                        <span>Warga mengirim detail lokasi dan masalah</span>
+                    </div>
+                    <span class="step-status">Live</span>
+                </div>
+                <div class="workflow-step">
+                    <span class="step-dot">2</span>
+                    <div>
+                        <strong>Verifikasi admin</strong>
+                        <span>Data dicek sebelum ditindaklanjuti</span>
+                    </div>
+                    <span class="step-status">Track</span>
+                </div>
+                <div class="workflow-step">
+                    <span class="step-dot">3</span>
+                    <div>
+                        <strong>Status selesai</strong>
+                        <span>Progres penanganan tampil di dashboard</span>
+                    </div>
+                    <span class="step-status">Done</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="home-stat-row">
+        <div class="home-stat animate-rise" style="--delay: 0.24s;">
+            <div class="home-stat-icon">01</div>
+            <strong>Cepat</strong>
+            <span>Input laporan warga dengan alur sederhana dan langsung tercatat.</span>
+        </div>
+        <div class="home-stat animate-rise" style="--delay: 0.32s;">
+            <div class="home-stat-icon">02</div>
+            <strong>Terpantau</strong>
+            <span>Status penanganan jelas dari reported sampai resolved.</span>
+        </div>
+        <div class="home-stat animate-rise" style="--delay: 0.4s;">
+            <div class="home-stat-icon">03</div>
+            <strong>Terpusat</strong>
+            <span>Data laporan kota terkumpul rapi untuk admin dan warga.</span>
+        </div>
+    </div>
+</section>
 {% endblock %}

@@ -1,98 +1,421 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .dashboard-shell {
+        background:
+            linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(25, 135, 84, 0.1)),
+            #f8fafc;
+        border: 1px solid #e7edf5;
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 24px;
+        position: relative;
+    }
 
-<div class="container mt-4">
+    .dashboard-hero {
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        border-radius: 8px;
+        color: #fff;
+        padding: 24px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 18px 40px rgba(15, 118, 110, 0.18);
+    }
 
-    <h2 class="mb-4 text-center">📊 Dashboard Smart City</h2>
+    .dashboard-hero::before {
+        animation: cityGridSlide 18s linear infinite;
+        background:
+            linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+            linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+        background-size: 56px 56px;
+        content: "";
+        inset: 0;
+        opacity: 0.28;
+        position: absolute;
+    }
 
-    <div class="alert alert-primary text-center">
-    📡 Real-time Dashboard Smart City System
-</div>
+    .dashboard-hero::after {
+        animation: scanGlow 5s ease-in-out infinite;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+        content: "";
+        height: 100%;
+        left: -35%;
+        position: absolute;
+        top: 0;
+        transform: skewX(-18deg);
+        width: 30%;
+    }
 
-    <!-- ================= CARD ================= -->
-    <div class="row text-center">
+    .dashboard-hero > * {
+        position: relative;
+        z-index: 1;
+    }
 
-        <div class="col-md-4 mb-3">
-            <div class="card shadow p-3 bg-primary text-white">
-                <h5>Total Laporan</h5>
-                <h2>{{ total }}</h2>
+    .total-pill {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 999px;
+        color: #fff;
+        display: inline-flex;
+        font-weight: 700;
+        padding: 10px 16px;
+        white-space: nowrap;
+    }
+
+    .metric-card,
+    .chart-card {
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid #e5eaf2;
+        border-radius: 8px;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .metric-card {
+        height: 100%;
+        padding: 18px;
+        transform: translateY(0);
+        transition: box-shadow 0.22s ease, transform 0.22s ease;
+    }
+
+    .metric-card:hover {
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.13);
+        transform: translateY(-4px);
+    }
+
+    .metric-label {
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .metric-value {
+        color: #172033;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+        margin: 0;
+    }
+
+    .metric-line {
+        border-radius: 999px;
+        height: 5px;
+        margin-top: 18px;
+        width: 54px;
+        transform-origin: left;
+    }
+
+    .chart-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 390px;
+        padding: 24px;
+    }
+
+    .animate-rise {
+        animation: riseIn 0.7s ease both;
+        animation-delay: var(--delay, 0s);
+    }
+
+    .animate-line {
+        animation: lineGrow 0.8s ease both;
+        animation-delay: calc(var(--delay, 0s) + 0.22s);
+    }
+
+    .chart-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .chart-subtitle {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin: 4px 0 0;
+    }
+
+    .chart-wrap {
+        flex: 1;
+        height: 300px;
+        min-height: 300px;
+        position: relative;
+    }
+
+    .chart-wrap canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    @media (max-width: 767.98px) {
+        .dashboard-shell,
+        .dashboard-hero {
+            padding: 18px;
+        }
+
+        .chart-card {
+            min-height: 350px;
+        }
+
+        .chart-wrap {
+            height: 260px;
+            min-height: 260px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dashboard-hero::before,
+        .dashboard-hero::after,
+        .animate-rise,
+        .animate-line {
+            animation: none;
+        }
+
+        .metric-card,
+        .metric-card:hover {
+            transform: none;
+        }
+    }
+
+    @keyframes riseIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes lineGrow {
+        from {
+            transform: scaleX(0);
+        }
+        to {
+            transform: scaleX(1);
+        }
+    }
+
+    @keyframes cityGridSlide {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 56px 56px;
+        }
+    }
+
+    @keyframes scanGlow {
+        0%, 46% {
+            left: -35%;
+            opacity: 0;
+        }
+        58% {
+            opacity: 0.7;
+        }
+        100% {
+            left: 110%;
+            opacity: 0;
+        }
+    }
+</style>
+
+<div class="dashboard-shell">
+    <div class="dashboard-hero animate-rise d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <p class="text-white-50 fw-semibold mb-2">Smart City Analytics</p>
+            <h2 class="m-0 fw-bold">Dashboard Statistik Laporan</h2>
+            <p class="text-white-50 mb-0 mt-2">Pantau status, kategori, dan jumlah laporan warga secara ringkas.</p>
+        </div>
+        <span class="total-pill align-self-start align-self-lg-center"><span class="count-up" data-count="{{ total }}">{{ total }}</span>&nbsp;laporan</span>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl">
+            <div class="metric-card animate-rise" style="--delay: 0.06s;">
+                <div class="metric-label">Total Laporan</div>
+                <p class="metric-value count-up" data-count="{{ total }}">{{ total }}</p>
+                <div class="metric-line animate-line bg-primary" style="--delay: 0.06s;"></div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card shadow p-3 bg-secondary text-white">
-                <h5>Reported</h5>
-                <h2>{{ reported }}</h2>
+        <div class="col-sm-6 col-xl">
+            <div class="metric-card animate-rise" style="--delay: 0.14s;">
+                <div class="metric-label">Reported</div>
+                <p class="metric-value count-up" data-count="{{ reported }}">{{ reported }}</p>
+                <div class="metric-line animate-line bg-secondary" style="--delay: 0.14s;"></div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card shadow p-3 bg-info text-white">
-                <h5>Verified</h5>
-                <h2>{{ verified }}</h2>
+        <div class="col-sm-6 col-xl">
+            <div class="metric-card animate-rise" style="--delay: 0.22s;">
+                <div class="metric-label">Verified</div>
+                <p class="metric-value count-up" data-count="{{ verified }}">{{ verified }}</p>
+                <div class="metric-line animate-line bg-info" style="--delay: 0.22s;"></div>
             </div>
         </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card shadow p-3 bg-warning text-dark">
-                <h5>In Progress</h5>
-                <h2>{{ in_progress }}</h2>
+        <div class="col-sm-6 col-xl">
+            <div class="metric-card animate-rise" style="--delay: 0.3s;">
+                <div class="metric-label">In Progress</div>
+                <p class="metric-value count-up" data-count="{{ in_progress }}">{{ in_progress }}</p>
+                <div class="metric-line animate-line bg-warning" style="--delay: 0.3s;"></div>
             </div>
         </div>
+        <div class="col-sm-6 col-xl">
+            <div class="metric-card animate-rise" style="--delay: 0.38s;">
+                <div class="metric-label">Resolved</div>
+                <p class="metric-value count-up" data-count="{{ resolved }}">{{ resolved }}</p>
+                <div class="metric-line animate-line bg-success" style="--delay: 0.38s;"></div>
+            </div>
+        </div>
+    </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card shadow p-3 bg-success text-white">
-                <h5>Resolved</h5>
-                <h2>{{ resolved }}</h2>
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-6 d-flex">
+            <div class="chart-card animate-rise w-100" style="--delay: 0.46s;">
+                <div class="mb-3">
+                    <h5 class="chart-title">Distribusi Status</h5>
+                    <p class="chart-subtitle">Perbandingan progres penyelesaian laporan.</p>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 d-flex">
+            <div class="chart-card animate-rise w-100" style="--delay: 0.54s;">
+                <div class="mb-3">
+                    <h5 class="chart-title">Distribusi Kategori</h5>
+                    <p class="chart-subtitle">Jumlah laporan berdasarkan jenis masalah.</p>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="categoryChart"></canvas>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- ================= CHART ================= -->
-    <div class="card shadow p-4 mt-4">
-        <h5 class="text-center mb-3">📊 Grafik Status Laporan</h5>
-        <canvas id="reportChart"></canvas>
-    </div>
+    
 
 </div>
 
-<!-- ================= CHART JS ================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // convert Django variable ke JS aman (anti merah)
-    const reported = "{{ reported }}";
-    const verified = "{{ verified }}";
-    const in_progress = "{{ in_progress }}";
-    const resolved = "{{ resolved }}";
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const ctx = document.getElementById('reportChart');
+    document.querySelectorAll('.count-up').forEach((item) => {
+        const target = Number(item.dataset.count || 0);
 
-    new Chart(ctx, {
+        if (reduceMotion || target === 0) {
+            item.textContent = target;
+            return;
+        }
+
+        const duration = 900;
+        const start = performance.now();
+
+        function updateCount(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            item.textContent = Math.round(target * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
+            }
+        }
+
+        requestAnimationFrame(updateCount);
+    });
+
+    const statusData = [
+        parseInt('{{ reported }}'),
+        parseInt('{{ verified }}'),
+        parseInt('{{ in_progress }}'),
+        parseInt('{{ resolved }}')
+    ];
+
+    const categoryData = [
+        parseInt('{{ jalan_rusak }}'),
+        parseInt('{{ sampah }}'),
+        parseInt('{{ lampu_mati }}'),
+        parseInt('{{ drainase }}'),
+        parseInt('{{ keamanan }}')
+    ];
+
+    new Chart(document.getElementById('statusChart'), {
         type: 'doughnut',
         data: {
             labels: ['Reported', 'Verified', 'In Progress', 'Resolved'],
             datasets: [{
-                data: [
-                    parseInt(reported),
-                    parseInt(verified),
-                    parseInt(in_progress),
-                    parseInt(resolved)
-                ],
-                borderWidth: 1
+                data: statusData,
+                backgroundColor: ['#0d6efd', '#6f42c1', '#fd7e14', '#198754'],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            cutout: '64%',
+            animation: {
+                animateRotate: !reduceMotion,
+                animateScale: !reduceMotion,
+                duration: reduceMotion ? 0 : 1100,
+                easing: 'easeOutQuart'
+            },
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 16,
+                        usePointStyle: true
+                    }
                 }
             }
         }
     });
+
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Jalan Rusak', 'Sampah', 'Lampu Mati', 'Drainase', 'Keamanan'],
+            datasets: [{
+                label: 'Jumlah laporan',
+                data: categoryData,
+                backgroundColor: '#0dcaf0',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: reduceMotion ? 0 : 1100,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#475569' }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#e2e8f0' },
+                    ticks: {
+                        color: '#475569',
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
 </script>
 
 {% endblock %}

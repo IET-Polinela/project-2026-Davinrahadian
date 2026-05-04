@@ -1,0 +1,810 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .dashboard-shell {
+        background:
+            linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(25, 135, 84, 0.1)),
+            #f8fafc;
+        border: 1px solid #e7edf5;
+        border-radius: 8px;
+        overflow: hidden;
+        padding: 24px;
+        position: relative;
+    }
+
+    .dashboard-hero {
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        border-radius: 8px;
+        color: #fff;
+        overflow: hidden;
+        padding: 24px;
+        position: relative;
+        box-shadow: 0 18px 40px rgba(15, 118, 110, 0.18);
+    }
+
+    .dashboard-hero::before {
+        animation: cityGridSlide 18s linear infinite;
+        background:
+            linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+            linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+        background-size: 56px 56px;
+        content: "";
+        inset: 0;
+        opacity: 0.28;
+        position: absolute;
+    }
+
+    .dashboard-hero::after {
+        animation: scanGlow 5s ease-in-out infinite;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+        content: "";
+        height: 100%;
+        left: -35%;
+        position: absolute;
+        top: 0;
+        transform: skewX(-18deg);
+        width: 30%;
+    }
+
+    .dashboard-hero > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .total-pill {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 999px;
+        color: #fff;
+        display: inline-flex;
+        font-weight: 700;
+        padding: 10px 16px;
+        white-space: nowrap;
+    }
+
+    .hero-stats {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(92px, 1fr));
+        margin-top: 22px;
+        max-width: 720px;
+    }
+
+    .hero-stat {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    .hero-stat strong {
+        display: block;
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+
+    .hero-stat span {
+        color: rgba(255, 255, 255, 0.75);
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 7px;
+    }
+
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #e5eaf2;
+        border-radius: 8px;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+        transform: translateY(0);
+        transition: box-shadow 0.22s ease, transform 0.22s ease;
+    }
+
+    .dashboard-card:hover {
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.13);
+        transform: translateY(-4px);
+    }
+
+    .summary-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        overflow: hidden;
+        padding: 18px;
+        position: relative;
+    }
+
+    .summary-card::after {
+        background: var(--accent, #0d6efd);
+        border-radius: 999px;
+        content: "";
+        height: 80px;
+        opacity: 0.12;
+        position: absolute;
+        right: -34px;
+        top: -34px;
+        width: 80px;
+    }
+
+    .summary-top {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .summary-label {
+        color: #64748b;
+        font-size: 0.8rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .summary-icon {
+        align-items: center;
+        background: var(--accent-soft, #e7f1ff);
+        border-radius: 8px;
+        color: var(--accent, #0d6efd);
+        display: inline-flex;
+        font-size: 0.82rem;
+        font-weight: 900;
+        height: 34px;
+        justify-content: center;
+        width: 34px;
+    }
+
+    .summary-value {
+        color: #172033;
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1;
+        margin: 18px 0 10px;
+    }
+
+    .summary-track,
+    .insight-track {
+        background: #e8eef7;
+        border-radius: 999px;
+        height: 7px;
+        overflow: hidden;
+    }
+
+    .summary-fill,
+    .insight-fill {
+        background: var(--accent, #0d6efd);
+        border-radius: inherit;
+        height: 100%;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.9s ease;
+    }
+
+    .summary-note {
+        color: #64748b;
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .chart-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 390px;
+    }
+
+    .chart-title {
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .chart-subtitle {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin: 4px 0 0;
+    }
+
+    .chart-wrap {
+        flex: 1;
+        height: 300px;
+        min-height: 300px;
+        position: relative;
+    }
+
+    .chart-wrap canvas {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    .insight-card {
+        min-height: 390px;
+        padding: 24px;
+    }
+
+    .insight-list {
+        display: grid;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .insight-row {
+        animation: rowSlideIn 0.5s ease both;
+        animation-delay: calc(var(--row-delay, 0s) + 0.12s);
+    }
+
+    .insight-meta {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .insight-name {
+        color: #172033;
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+
+    .insight-count {
+        color: #64748b;
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .table-card {
+        overflow: hidden;
+    }
+
+    .table-card .table {
+        margin-bottom: 0;
+    }
+
+    .table-card thead th {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 0.78rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .table-card tbody td {
+        border-color: #edf2f7;
+        padding-bottom: 0.8rem;
+        padding-top: 0.8rem;
+    }
+
+    .status-badge {
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 0.72rem;
+        font-weight: 800;
+        padding: 6px 9px;
+        white-space: nowrap;
+    }
+
+    .status-reported {
+        background: #e7f1ff;
+        color: #0d6efd;
+    }
+
+    .status-verified {
+        background: #f0e7ff;
+        color: #6f42c1;
+    }
+
+    .status-in-progress {
+        background: #fff3cd;
+        color: #9a5b00;
+    }
+
+    .status-resolved {
+        background: #dff5e8;
+        color: #147044;
+    }
+
+    .animate-rise {
+        animation: riseIn 0.7s ease both;
+        animation-delay: var(--delay, 0s);
+    }
+
+    .table-card tbody tr {
+        animation: rowSlideIn 0.5s ease both;
+        animation-delay: calc(var(--row-delay, 0s) + 0.12s);
+    }
+
+    @media (max-width: 767.98px) {
+        .dashboard-shell,
+        .dashboard-hero {
+            padding: 18px;
+        }
+
+        .chart-card {
+            min-height: 350px;
+        }
+
+        .chart-wrap {
+            height: 260px;
+            min-height: 260px;
+        }
+
+        .hero-stats,
+        .summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .hero-stats,
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dashboard-hero::before,
+        .dashboard-hero::after,
+        .animate-rise,
+        .table-card tbody tr,
+        .insight-row {
+            animation: none;
+        }
+
+        .dashboard-card,
+        .dashboard-card:hover {
+            transform: none;
+        }
+    }
+
+    @keyframes riseIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes rowSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes cityGridSlide {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: 56px 56px;
+        }
+    }
+
+    @keyframes scanGlow {
+        0%, 46% {
+            left: -35%;
+            opacity: 0;
+        }
+        58% {
+            opacity: 0.7;
+        }
+        100% {
+            left: 110%;
+            opacity: 0;
+        }
+    }
+</style>
+
+<div class="dashboard-shell">
+    <div class="dashboard-hero animate-rise d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+        <div class="w-100">
+            <p class="text-white-50 fw-semibold mb-2">Smart City Analytics</p>
+            <h2 class="m-0 fw-bold">Dashboard Statistik Laporan</h2>
+            <p class="text-white-50 mb-0 mt-2">Ringkasan status, kategori, dan laporan terbaru warga.</p>
+            <div class="hero-stats" id="heroStats">
+                <div class="hero-stat">
+                    <strong id="heroReported">0</strong>
+                    <span>Reported</span>
+                </div>
+                <div class="hero-stat">
+                    <strong id="heroVerified">0</strong>
+                    <span>Verified</span>
+                </div>
+                <div class="hero-stat">
+                    <strong id="heroProgress">0</strong>
+                    <span>In Progress</span>
+                </div>
+                <div class="hero-stat">
+                    <strong id="heroResolved">0</strong>
+                    <span>Resolved</span>
+                </div>
+            </div>
+        </div>
+        <span class="total-pill align-self-start align-self-lg-center" id="totalReports">0 laporan</span>
+    </div>
+
+    <div class="summary-grid" id="statusSummary">
+        <div class="dashboard-card summary-card animate-rise" style="--delay: 0.06s; --accent: #0d6efd; --accent-soft: #e7f1ff;">
+            <div class="summary-top">
+                <p class="summary-label">Reported</p>
+                <span class="summary-icon">RP</span>
+            </div>
+            <p class="summary-value" data-status-value="REPORTED">0</p>
+            <div class="summary-track"><div class="summary-fill" data-status-fill="REPORTED"></div></div>
+            <span class="summary-note" data-status-percent="REPORTED">0% dari total</span>
+        </div>
+        <div class="dashboard-card summary-card animate-rise" style="--delay: 0.12s; --accent: #6f42c1; --accent-soft: #f0e7ff;">
+            <div class="summary-top">
+                <p class="summary-label">Verified</p>
+                <span class="summary-icon">VF</span>
+            </div>
+            <p class="summary-value" data-status-value="VERIFIED">0</p>
+            <div class="summary-track"><div class="summary-fill" data-status-fill="VERIFIED"></div></div>
+            <span class="summary-note" data-status-percent="VERIFIED">0% dari total</span>
+        </div>
+        <div class="dashboard-card summary-card animate-rise" style="--delay: 0.18s; --accent: #fd7e14; --accent-soft: #fff3cd;">
+            <div class="summary-top">
+                <p class="summary-label">In Progress</p>
+                <span class="summary-icon">IP</span>
+            </div>
+            <p class="summary-value" data-status-value="IN_PROGRESS">0</p>
+            <div class="summary-track"><div class="summary-fill" data-status-fill="IN_PROGRESS"></div></div>
+            <span class="summary-note" data-status-percent="IN_PROGRESS">0% dari total</span>
+        </div>
+        <div class="dashboard-card summary-card animate-rise" style="--delay: 0.24s; --accent: #198754; --accent-soft: #dff5e8;">
+            <div class="summary-top">
+                <p class="summary-label">Resolved</p>
+                <span class="summary-icon">RS</span>
+            </div>
+            <p class="summary-value" data-status-value="RESOLVED">0</p>
+            <div class="summary-track"><div class="summary-fill" data-status-fill="RESOLVED"></div></div>
+            <span class="summary-note" data-status-percent="RESOLVED">0% dari total</span>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4 align-items-stretch">
+        <div class="col-xl-4 col-lg-6 d-flex">
+            <div class="dashboard-card chart-card animate-rise p-4 w-100" style="--delay: 0.3s;">
+                <div class="mb-3">
+                    <h5 class="chart-title">Distribusi Status</h5>
+                    <p class="chart-subtitle">Perbandingan progres penyelesaian laporan.</p>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-6 d-flex">
+            <div class="dashboard-card chart-card animate-rise p-4 w-100" style="--delay: 0.38s;">
+                <div class="mb-3">
+                    <h5 class="chart-title">Distribusi Kategori</h5>
+                    <p class="chart-subtitle">Jumlah laporan berdasarkan jenis masalah.</p>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 d-flex">
+            <div class="dashboard-card insight-card animate-rise w-100" style="--delay: 0.46s;">
+                <div>
+                    <h5 class="chart-title">Kategori Paling Aktif</h5>
+                    <p class="chart-subtitle">Ranking kategori berdasarkan jumlah laporan.</p>
+                </div>
+                <div class="insight-list" id="categoryInsights">
+                    <div class="text-muted">Memuat data...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="dashboard-card table-card animate-rise h-100" style="--delay: 0.54s;">
+                <div class="p-4 pb-2">
+                    <h5 class="chart-title">5 Laporan Terbaru Dilaporkan</h5>
+                    <p class="chart-subtitle">Data masuk paling baru dari warga.</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="latestReportedBody">
+                            <tr><td colspan="4" class="text-muted">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dashboard-card table-card animate-rise h-100" style="--delay: 0.62s;">
+                <div class="p-4 pb-2">
+                    <h5 class="chart-title">5 Laporan Terbaru Selesai</h5>
+                    <p class="chart-subtitle">Laporan yang sudah berhasil diselesaikan.</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>Lokasi</th>
+                                <th>Waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="latestResolvedBody">
+                            <tr><td colspan="4" class="text-muted">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const statusCanvas = document.getElementById('statusChart');
+    const categoryCanvas = document.getElementById('categoryChart');
+    const totalReports = document.getElementById('totalReports');
+    const latestReportedBody = document.getElementById('latestReportedBody');
+    const latestResolvedBody = document.getElementById('latestResolvedBody');
+    const categoryInsights = document.getElementById('categoryInsights');
+    const statusColors = {
+        REPORTED: '#0d6efd',
+        VERIFIED: '#6f42c1',
+        IN_PROGRESS: '#fd7e14',
+        RESOLVED: '#198754'
+    };
+
+    fetch('{% url "dashboard_24782084:data" %}')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            animateTotal(data.total);
+            renderHeroStats(data.status);
+            renderStatusSummary(data.status, data.total);
+            renderStatusChart(statusCanvas, data.status);
+            renderCategoryChart(categoryCanvas, data.categories);
+            renderCategoryInsights(data.categories);
+            renderRows(latestReportedBody, data.latest_reported);
+            renderRows(latestResolvedBody, data.latest_resolved);
+        });
+
+    function animateTotal(total) {
+        if (reduceMotion || total === 0) {
+            totalReports.textContent = total + ' laporan';
+            return;
+        }
+
+        const duration = 900;
+        const start = performance.now();
+
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            totalReports.textContent = Math.round(total * eased) + ' laporan';
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+        requestAnimationFrame(tick);
+    }
+
+    function animateNumber(element, target) {
+        if (reduceMotion || target === 0) {
+            element.textContent = target;
+            return;
+        }
+
+        const duration = 850;
+        const start = performance.now();
+
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            element.textContent = Math.round(target * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+            }
+        }
+
+        requestAnimationFrame(tick);
+    }
+
+    function renderHeroStats(statusData) {
+        animateNumber(document.getElementById('heroReported'), statusData.REPORTED || 0);
+        animateNumber(document.getElementById('heroVerified'), statusData.VERIFIED || 0);
+        animateNumber(document.getElementById('heroProgress'), statusData.IN_PROGRESS || 0);
+        animateNumber(document.getElementById('heroResolved'), statusData.RESOLVED || 0);
+    }
+
+    function renderStatusSummary(statusData, total) {
+        Object.keys(statusData).forEach(function (status) {
+            const value = statusData[status] || 0;
+            const percent = total ? Math.round((value / total) * 100) : 0;
+            const valueEl = document.querySelector('[data-status-value="' + status + '"]');
+            const fillEl = document.querySelector('[data-status-fill="' + status + '"]');
+            const percentEl = document.querySelector('[data-status-percent="' + status + '"]');
+
+            if (valueEl) {
+                animateNumber(valueEl, value);
+            }
+
+            if (fillEl) {
+                fillEl.style.setProperty('--accent', statusColors[status] || '#0d6efd');
+                requestAnimationFrame(function () {
+                    fillEl.style.transform = 'scaleX(' + (percent / 100) + ')';
+                });
+            }
+
+            if (percentEl) {
+                percentEl.textContent = percent + '% dari total';
+            }
+        });
+    }
+
+    function renderStatusChart(canvas, statusData) {
+        new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(statusData),
+                datasets: [{
+                    data: Object.values(statusData),
+                    backgroundColor: ['#0d6efd', '#6f42c1', '#fd7e14', '#198754']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '64%',
+                animation: {
+                    animateRotate: !reduceMotion,
+                    animateScale: !reduceMotion,
+                    duration: reduceMotion ? 0 : 1100,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 16,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderCategoryChart(canvas, categoryData) {
+        new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(categoryData),
+                datasets: [{
+                    label: 'Jumlah laporan',
+                    data: Object.values(categoryData),
+                    backgroundColor: '#0dcaf0'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: reduceMotion ? 0 : 1100,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#475569' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#e2e8f0' },
+                        ticks: {
+                            color: '#475569',
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderCategoryInsights(categoryData) {
+        const entries = Object.entries(categoryData).sort(function (a, b) {
+            return b[1] - a[1];
+        });
+        const max = entries.reduce(function (highest, entry) {
+            return Math.max(highest, entry[1]);
+        }, 0);
+        const colors = ['#0f766e', '#2563eb', '#fd7e14', '#6f42c1', '#198754'];
+
+        if (!entries.length || max === 0) {
+            categoryInsights.innerHTML = '<div class="text-muted">Belum ada data kategori</div>';
+            return;
+        }
+
+        categoryInsights.innerHTML = entries.map(function (entry, index) {
+            const width = Math.round((entry[1] / max) * 100);
+            return '<div class="insight-row" style="--row-delay: ' + (index * 0.06) + 's; --accent: ' + colors[index % colors.length] + ';">' +
+                '<div class="insight-meta">' +
+                    '<span class="insight-name">' + escapeHtml(entry[0]) + '</span>' +
+                    '<span class="insight-count">' + entry[1] + ' laporan</span>' +
+                '</div>' +
+                '<div class="insight-track"><div class="insight-fill" style="transform: scaleX(' + (width / 100) + ');"></div></div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function renderRows(tbody, reports) {
+        if (!reports.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-muted">Belum ada data</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = reports.map(function (report, index) {
+            return '<tr style="--row-delay: ' + (index * 0.05) + 's;">' +
+                '<td class="fw-semibold">' + escapeHtml(report.title) + '</td>' +
+                '<td><span class="status-badge ' + statusClass(report.status) + '">' + escapeHtml(report.category) + '</span></td>' +
+                '<td class="text-muted">' + escapeHtml(report.location) + '</td>' +
+                '<td>' + escapeHtml(report.created_at) + '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function statusClass(status) {
+        return {
+            REPORTED: 'status-reported',
+            VERIFIED: 'status-verified',
+            IN_PROGRESS: 'status-in-progress',
+            RESOLVED: 'status-resolved'
+        }[status] || 'status-reported';
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char];
+        });
+    }
+});
+</script>
+{% endblock %}

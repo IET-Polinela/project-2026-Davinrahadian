@@ -1,4 +1,6 @@
 
+from django.db.models import Count, Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Report
 from .forms import ReportForm
@@ -47,6 +49,49 @@ def report_list(request):
     return render(request, 'main_app/report_list.html', {'reports': reports})
 
 
+@login_required
+def report_search(request):
+    query = request.GET.get('q', '').strip()
+    reports = Report.objects.all()
+
+    if query:
+        reports = reports.filter(
+            Q(title__icontains=query)
+            | Q(category__icontains=query)
+            | Q(location__icontains=query)
+            | Q(description__icontains=query)
+            | Q(status__icontains=query)
+        )
+
+    data = [
+        {
+            'id': report.id,
+            'title': report.title,
+            'category': report.category,
+            'description': report.description,
+            'location': report.location,
+            'status': report.status,
+        }
+        for report in reports[:50]
+    ]
+
+    return JsonResponse({'reports': data})
+
+
+@login_required
+def report_json_detail(request, id):
+    report = get_object_or_404(Report, id=id)
+    return JsonResponse({
+        'id': report.id,
+        'title': report.title,
+        'category': report.category,
+        'description': report.description,
+        'location': report.location,
+        'status': report.status,
+        'created_at': report.created_at.strftime('%d %B %Y %H:%M'),
+    })
+
+
 # =========================
 # ADD REPORT (manual form)
 # =========================
@@ -58,6 +103,8 @@ def add_report(request):
 
         Report.objects.create(
             title=title,
+            category=request.POST.get('category') or 'Jalan Rusak',
+            location=request.POST.get('location') or '-',
             description=description,
             status='REPORTED'  # ✅ FIX sesuai lab
         )
@@ -145,6 +192,9 @@ def dashboard(request):
     verified = Report.objects.filter(status='VERIFIED').count()
     in_progress = Report.objects.filter(status='IN_PROGRESS').count()
     resolved = Report.objects.filter(status='RESOLVED').count()
+    category_counts = dict(
+        Report.objects.values_list('category').annotate(total=Count('id'))
+    )
 
     context = {
         'total': total,
@@ -152,6 +202,11 @@ def dashboard(request):
         'verified': verified,
         'in_progress': in_progress,
         'resolved': resolved,
+        'jalan_rusak': category_counts.get('Jalan Rusak', 0),
+        'sampah': category_counts.get('Sampah', 0),
+        'lampu_mati': category_counts.get('Lampu Mati', 0),
+        'drainase': category_counts.get('Drainase', 0),
+        'keamanan': category_counts.get('Keamanan', 0),
     }
 
     return render(request, 'main_app/dashboard.html', context)

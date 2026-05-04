@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Tambah Laporan</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        Mohon periksa kembali data laporan.
+    </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label class="form-label">Judul</label>
+        {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Kategori</label>
+        {{ form.category }}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Lokasi</label>
+        {{ form.location }}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Deskripsi</label>
+        {{ form.description }}
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        {{ form.status }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Simpan</button>
+    <a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
+</form>
+{% endblock %}

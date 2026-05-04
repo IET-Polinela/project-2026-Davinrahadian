@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main_app',   # ← WAJIB ADA
+    'dashboard_24782084',
     'about',
     'contacts',
     'usermanagement_24782084',

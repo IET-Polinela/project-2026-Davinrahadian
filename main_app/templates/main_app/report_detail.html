@@ -1,14 +1,24 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Isi halaman kamu</h2>
+<h2 class="mb-4">Detail Laporan</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Judul</dt>
+    <dd class="col-sm-9">{{ object.title }}</dd>
+
+    <dt class="col-sm-3">Kategori</dt>
+    <dd class="col-sm-9">{{ object.category }}</dd>
+
+    <dt class="col-sm-3">Deskripsi</dt>
+    <dd class="col-sm-9">{{ object.description }}</dd>
+
+    <dt class="col-sm-3">Lokasi</dt>
+    <dd class="col-sm-9">{{ object.location }}</dd>
+
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">{{ object.status }}</dd>
+</dl>
+
+<a href="{% url 'report_list' %}" class="btn btn-secondary">Kembali</a>
 {% endblock %}
-
-<h1>Detail Report</h1>
-
-<p><b>Title:</b> {{ object.title }}</p>
-<p><b>Category:</b> {{ object.category }}</p>
-<p><b>Description:</b> {{ object.description }}</p>
-<p><b>Location:</b> {{ object.location }}</p>
-<p><b>Status:</b> {{ object.status }}</p>
-
-<a href="{% url 'report_list' %}">Kembali</a>

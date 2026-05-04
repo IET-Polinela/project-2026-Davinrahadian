@@ -1,39 +1,424 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="m-0">Daftar Laporan</h2>
-    <a href="{% url 'create_report' %}" class="btn btn-success btn-sm">+ Tambah Laporan</a>
+<style>
+    .reports-shell {
+        background:
+            linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(25, 135, 84, 0.09)),
+            #f8fafc;
+        border: 1px solid #e7edf5;
+        border-radius: 8px;
+        padding: 24px;
+    }
+
+    .reports-hero {
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        border-radius: 8px;
+        box-shadow: 0 18px 40px rgba(15, 118, 110, 0.18);
+        color: #fff;
+        padding: 24px;
+    }
+
+    .reports-count {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 999px;
+        color: #fff;
+        display: inline-flex;
+        font-weight: 700;
+        padding: 10px 16px;
+        white-space: nowrap;
+    }
+
+    .reports-card {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid #e5eaf2;
+        border-radius: 8px;
+        box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .reports-toolbar {
+        border-bottom: 1px solid #e5eaf2;
+        padding: 18px;
+    }
+
+    .search-wrap {
+        position: relative;
+    }
+
+    .search-icon {
+        color: #64748b;
+        font-size: 1rem;
+        left: 16px;
+        line-height: 1;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .report-search {
+        border: 1px solid #d8e0ea;
+        border-radius: 999px;
+        box-shadow: none;
+        min-height: 46px;
+        padding-left: 42px;
+    }
+
+    .report-search:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+    }
+
+    .reports-table-wrap {
+        max-height: 690px;
+        overflow: auto;
+    }
+
+    .reports-table {
+        min-width: 1120px;
+    }
+
+    .reports-table thead th {
+        background: #f1f5f9;
+        border-bottom: 1px solid #dbe4ef;
+        color: #475569;
+        font-size: 0.76rem;
+        letter-spacing: 0.02em;
+        padding: 14px 16px;
+        position: sticky;
+        text-transform: uppercase;
+        top: 0;
+        z-index: 2;
+    }
+
+    .reports-table tbody td {
+        border-color: #edf2f7;
+        color: #334155;
+        padding: 16px;
+        vertical-align: middle;
+    }
+
+    .reports-table tbody tr {
+        transition: background-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .reports-table tbody tr:hover {
+        background-color: #f8fbff;
+    }
+
+    .report-title {
+        color: #172033;
+        font-weight: 800;
+        min-width: 250px;
+    }
+
+    .report-description {
+        color: #64748b;
+        min-width: 260px;
+    }
+
+    .report-location {
+        color: #475569;
+        min-width: 280px;
+    }
+
+    .category-pill,
+    .status-pill {
+        border-radius: 999px;
+        display: inline-flex;
+        font-size: 0.76rem;
+        font-weight: 800;
+        line-height: 1;
+        padding: 8px 11px;
+        white-space: nowrap;
+    }
+
+    .category-pill {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .status-reported {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-verified {
+        background: #f3e8ff;
+        color: #7e22ce;
+    }
+
+    .status-in-progress,
+    .status-in_progress,
+    .status-inprogress {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .status-resolved {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-default {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .action-group {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    .action-group .btn {
+        border-radius: 999px;
+        font-weight: 700;
+        min-width: 68px;
+    }
+
+    .modal-content {
+        border: 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        color: #fff;
+    }
+
+    .modal-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .detail-label {
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .detail-value {
+        color: #172033;
+        font-weight: 600;
+    }
+
+    @media (max-width: 767.98px) {
+        .reports-shell,
+        .reports-hero {
+            padding: 18px;
+        }
+
+        .reports-toolbar {
+            padding: 14px;
+        }
+    }
+</style>
+
+<div class="reports-shell">
+    <div class="reports-hero d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <p class="text-white-50 fw-semibold mb-2">Smart City Reports</p>
+            <h2 class="m-0 fw-bold">Daftar Laporan</h2>
+            <p class="text-white-50 mb-0 mt-2">Pantau laporan warga, status penanganan, dan detail lokasi dalam satu layar.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="reports-count">{{ reports|length }} laporan</span>
+            <a href="{% url 'create_report' %}" class="btn btn-light fw-bold rounded-pill px-3">+ Tambah</a>
+        </div>
+    </div>
+
+    <div class="reports-card">
+        <div class="reports-toolbar">
+            <div class="search-wrap">
+                <span class="search-icon">S</span>
+                <input
+                    type="search"
+                    id="reportSearch"
+                    class="form-control report-search"
+                    placeholder="Cari judul, kategori, lokasi, deskripsi, atau status..."
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+
+        <div class="reports-table-wrap">
+            <table class="table table-hover align-middle mb-0 reports-table">
+                <thead>
+                    <tr>
+                        <th>Judul</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>Lokasi</th>
+                        <th>Status</th>
+                        <th style="width: 250px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    {% for report in reports %}
+                    <tr>
+                        <td class="report-title">{{ report.title }}</td>
+                        <td><span class="category-pill">{{ report.category }}</span></td>
+                        <td class="report-description">{{ report.description|truncatechars:92 }}</td>
+                        <td class="report-location">{{ report.location|truncatechars:96 }}</td>
+                        <td>
+                            <span class="status-pill status-{{ report.status|lower|cut:'_' }}">{{ report.status }}</span>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <button type="button" class="btn btn-outline-primary btn-sm js-detail" data-report-id="{{ report.id }}">View</button>
+                                <a href="{% url 'update_report' report.id %}" class="btn btn-outline-warning btn-sm">Edit</a>
+                                <a href="{% url 'delete_report' report.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">Belum ada laporan</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle mb-0">
-        <thead class="table-primary">
-            <tr>
-                <th>Judul</th>
-                <th>Deskripsi</th>
-                <th>Lokasi</th>
-                <th style="width: 220px;">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in reports %}
-            <tr>
-                <td class="fw-semibold">{{ report.title }}</td>
-                <td>{{ report.description }}</td>
-                <td>{{ report.location }}</td>
-                <td class="d-flex gap-2">
-                    <a href="{% url 'report_detail' report.id %}" class="btn btn-outline-primary btn-sm">View</a>
-                    <a href="{% url 'update_report' report.id %}" class="btn btn-outline-warning btn-sm">Edit</a>
-                    <a href="{% url 'delete_report' report.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center text-muted py-4">Belum ada laporan</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-labelledby="reportDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="reportDetailTitle">Detail Laporan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="detail-label">Kategori</div>
+                        <div class="detail-value" id="detailCategory">-</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value" id="detailStatus">-</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-label">Lokasi</div>
+                        <div class="detail-value" id="detailLocation">-</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-label">Tanggal</div>
+                        <div class="detail-value" id="detailCreatedAt">-</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="detail-label">Deskripsi</div>
+                        <div class="detail-value" id="detailDescription">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('reportSearch');
+    const tableBody = document.getElementById('reportTableBody');
+    const modalElement = document.getElementById('reportDetailModal');
+    const detailModal = new bootstrap.Modal(modalElement);
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            fetchReports(searchInput.value);
+        }, 350);
+    });
+
+    tableBody.addEventListener('click', function (event) {
+        const detailButton = event.target.closest('.js-detail');
+        if (!detailButton) {
+            return;
+        }
+
+        fetch('{% url "report_json_detail" 0 %}'.replace('/0/', '/' + detailButton.dataset.reportId + '/'))
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (report) {
+                document.getElementById('reportDetailTitle').textContent = report.title;
+                document.getElementById('detailCategory').textContent = report.category;
+                document.getElementById('detailStatus').textContent = report.status;
+                document.getElementById('detailLocation').textContent = report.location;
+                document.getElementById('detailCreatedAt').textContent = report.created_at;
+                document.getElementById('detailDescription').textContent = report.description;
+                detailModal.show();
+            });
+    });
+
+    function fetchReports(query) {
+        const url = new URL('{% url "report_search" %}', window.location.origin);
+        url.searchParams.set('q', query);
+
+        fetch(url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                renderRows(data.reports);
+            });
+    }
+
+    function renderRows(reports) {
+        if (!reports.length) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Data tidak ditemukan</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = reports.map(function (report) {
+            return '<tr>' +
+                '<td class="report-title">' + escapeHtml(report.title) + '</td>' +
+                '<td><span class="category-pill">' + escapeHtml(report.category) + '</span></td>' +
+                '<td class="report-description">' + escapeHtml(truncateText(report.description, 92)) + '</td>' +
+                '<td class="report-location">' + escapeHtml(truncateText(report.location, 96)) + '</td>' +
+                '<td><span class="status-pill ' + getStatusClass(report.status) + '">' + escapeHtml(report.status) + '</span></td>' +
+                '<td><div class="action-group">' +
+                    '<button type="button" class="btn btn-outline-primary btn-sm js-detail" data-report-id="' + report.id + '">View</button>' +
+                    '<a href="/update/' + report.id + '/" class="btn btn-outline-warning btn-sm">Edit</a>' +
+                    '<a href="/delete/' + report.id + '/" class="btn btn-outline-danger btn-sm">Delete</a>' +
+                '</div></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function getStatusClass(status) {
+        const statusMap = {
+            REPORTED: 'status-reported',
+            VERIFIED: 'status-verified',
+            IN_PROGRESS: 'status-in-progress',
+            RESOLVED: 'status-resolved'
+        };
+
+        return statusMap[status] || 'status-default';
+    }
+
+    function truncateText(value, maxLength) {
+        const text = String(value);
+        return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char];
+        });
+    }
+});
+</script>
 {% endblock %}
