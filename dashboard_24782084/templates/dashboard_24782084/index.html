@@ -584,6 +584,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(function (data) {
+             console.log('Dashboard JSON:', data);
+
             animateTotal(data.total);
             renderHeroStats(data.status);
             renderStatusSummary(data.status, data.total);

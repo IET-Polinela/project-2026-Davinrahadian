@@ -103,6 +103,7 @@ def add_report(request):
 
         Report.objects.create(
             title=title,
+            reporter=request.user,
             category=request.POST.get('category') or 'Jalan Rusak',
             location=request.POST.get('location') or '-',
             description=description,
@@ -123,7 +124,9 @@ def create_report(request):
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
-            form.save()
+            report = form.save(commit=False)
+            report.reporter = request.user
+            report.save()
             messages.success(request, 'Laporan berhasil dibuat!')
             return redirect('report_list')
     else:

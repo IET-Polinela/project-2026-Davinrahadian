@@ -4,6 +4,7 @@ from main_app.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('main_app.api_urls')),
     path('', home, name='home'),
     path('dashboard/', include('dashboard_24782084.urls')),
     path('about/', include('about.urls')),
