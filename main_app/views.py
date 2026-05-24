@@ -182,7 +182,31 @@ def delete_report(request, id):
 # HOME
 # =========================
 def home(request):
-    return render(request, 'main_app/home.html')
+    total_reports = Report.objects.count()
+    active_citizens = Report.objects.exclude(reporter__isnull=True).values('reporter').distinct().count()
+    verified_reports = Report.objects.filter(status__in=['VERIFIED', 'IN_PROGRESS', 'RESOLVED']).count()
+    resolved_reports = Report.objects.filter(status='RESOLVED').count()
+    in_progress_reports = Report.objects.filter(status='IN_PROGRESS').count()
+    recent_reports = Report.objects.select_related('reporter')[:5]
+
+    ai_detection = round((verified_reports / total_reports) * 100) if total_reports else 96
+    resolution_rate = round((resolved_reports / total_reports) * 100) if total_reports else 82
+    response_time = 4 if total_reports else 3
+
+    context = {
+        'total_reports': total_reports,
+        'active_citizens': active_citizens,
+        'verified_reports': verified_reports,
+        'resolved_reports': resolved_reports,
+        'in_progress_reports': in_progress_reports,
+        'ai_detection': ai_detection,
+        'resolution_rate': resolution_rate,
+        'response_time': response_time,
+        'system_uptime': '99.98%',
+        'recent_reports': recent_reports,
+    }
+
+    return render(request, 'main_app/home.html', context)
 
 
 # =========================

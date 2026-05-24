@@ -1,155 +1,340 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}IET Smart City{% endblock %}</title>
 
-    <title>IET Smart City</title>
-
-    <!-- ✅ Bootstrap CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            },
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#F5F7FB',
+                        baseSoft: '#EEF2F7',
+                        card: '#FFFFFF',
+                        borderSoft: '#E5E7EB',
+                        accent: '#2563EB',
+                        accentHover: '#1D4ED8',
+                        textPrimary: '#111827',
+                        textSecondary: '#6B7280',
+                        success: '#10B981',
+                        navy: '#0F172A',
+                        navyCard: '#111827',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        body: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 10px 30px rgba(15, 23, 42, 0.08)',
+                        panel: '0 18px 50px rgba(15, 23, 42, 0.12)',
+                    },
+                },
+            },
+        };
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         :root {
-            --app-ink: #172033;
-            --app-muted: #64748b;
-            --app-border: rgba(226, 232, 240, 0.78);
+            --bg-main: #F5F7FB;
+            --bg-soft: #EEF2F7;
+            --bg-card: #FFFFFF;
+            --line: #E5E7EB;
+            --line-strong: #D1D5DB;
+            --accent: #2563EB;
+            --accent-hover: #1D4ED8;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --navy: #0F172A;
+            --navy-card: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             background:
-                linear-gradient(120deg, rgba(15, 118, 110, 0.16), rgba(37, 99, 235, 0.12) 42%, rgba(248, 250, 252, 0.95)),
-                linear-gradient(180deg, #eef6ff 0%, #f8fafc 46%, #eefdf8 100%);
-            color: var(--app-ink);
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 26%),
+                linear-gradient(180deg, #f5f7fb 0%, #eef2f7 100%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         body::before {
             background-image:
-                linear-gradient(rgba(15, 23, 42, 0.045) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
-            background-size: 42px 42px;
+                linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
             content: "";
             inset: 0;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent 75%);
             pointer-events: none;
             position: fixed;
             z-index: -1;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, rgba(15, 118, 110, 0.96), rgba(37, 99, 235, 0.96)) !important;
-            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.16);
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
-        .navbar .container-fluid {
-            gap: 16px;
+        .site-nav {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
         }
 
-        .navbar-brand {
-            letter-spacing: 0.01em;
-        }
-
-        .navbar .nav-link {
+        .nav-link-chip {
             border-radius: 999px;
-            padding: 8px 10px;
-            transition: background-color 0.18s ease, transform 0.18s ease;
+            color: rgba(226, 232, 240, 0.82);
+            padding: 0.7rem 1rem;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
         }
 
-        .navbar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.16);
+        .nav-link-chip:hover,
+        .nav-link-chip.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
             transform: translateY(-1px);
         }
 
-        .app-content-card {
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid var(--app-border);
-            border-radius: 8px;
-            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+        .surface-card {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
         }
 
-        .toast-container {
-            z-index: 1080;
+        .surface-muted {
+            background: #F8FAFC;
+            border: 1px solid var(--line);
         }
 
-        @media (max-width: 991.98px) {
-            .navbar .d-flex {
-                flex-wrap: wrap;
+        .surface-dark {
+            background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(15, 23, 42, 0.98));
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+        }
+
+        .button-primary {
+            background: var(--accent);
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            color: #fff;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .button-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.16);
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            background: #FFFFFF;
+            border: 1px solid var(--line-strong);
+            color: var(--text-main);
+            transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .button-secondary:hover {
+            background: #F9FAFB;
+            border-color: #CBD5E1;
+            transform: translateY(-1px);
+        }
+
+        .status-dot {
+            align-items: center;
+            display: inline-flex;
+            gap: 0.45rem;
+        }
+
+        .status-dot::before {
+            background: var(--success);
+            border-radius: 999px;
+            content: "";
+            height: 0.5rem;
+            width: 0.5rem;
+        }
+
+        .message-toast {
+            animation: toastIn 0.35s ease both;
+        }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        [data-reveal].revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .message-toast,
+            [data-reveal] {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
     </style>
-
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
-
-<!-- ✅ NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">🏙️ IET Smart City</a>
-
-        <div class="d-flex gap-3">
-            <a class="nav-link d-inline text-white" href="/">Home</a>
-            <a class="nav-link d-inline text-white" href="/about/">About</a>
-            <a class="nav-link d-inline text-white" href="/contacts/">Contact</a>
-            <a class="nav-link d-inline text-white" href="/dashboard/">Dashboard</a>
-            {% if user.is_authenticated %}
-                <a class="nav-link d-inline text-white" href="/reports/">Reports</a>
-            {% endif %}
-            
-            {% if user.is_authenticated %}
-                <span class="text-white ms-3">
-                    👤 {{ user.username }} 
-                    {% if user.is_admin or user.is_superuser %}
-                        <span class="badge bg-danger">Admin</span>
-                    {% else %}
-                        <span class="badge bg-success">Citizen</span>
-                    {% endif %}
+<body class="{% block body_class %}{% endblock %}">
+<div class="min-h-screen">
+    <header class="sticky top-0 z-50 px-3 pt-3 md:px-6 md:pt-5">
+        <nav class="site-nav mx-auto flex w-full max-w-7xl items-center justify-between rounded-[1.5rem] px-4 py-3 md:px-6">
+            <a href="/" class="flex items-center gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-sm font-semibold text-white">IS</span>
+                <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-slate-100">IET Smart City</span>
+                    <span class="block text-xs text-slate-400">Reporting & monitoring platform</span>
                 </span>
-                <a class="nav-link d-inline text-white" href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a class="nav-link d-inline text-white" href="{% url 'login' %}">Login</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
+            </a>
 
-<!-- ✅ CONTENT -->
-<div class="container mt-4">
-    {% if messages %}
-        <div class="toast-container position-fixed top-0 end-0 p-3">
-            {% for message in messages %}
-                <div
-                    class="toast align-items-center text-bg-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% elif message.tags == 'success' %}success{% else %}primary{% endif %} border-0 mb-2"
-                    role="alert"
-                    aria-live="assertive"
-                    aria-atomic="true"
-                    data-bs-delay="2500"
-                >
-                    <div class="d-flex">
-                        <div class="toast-body">{{ message }}</div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button
+                type="button"
+                class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900/70 text-slate-200 md:hidden"
+                data-mobile-toggle
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+            >
+                <span class="text-lg">+</span>
+            </button>
+
+            <div class="hidden items-center gap-1 md:flex">
+                <a class="nav-link-chip {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
+                <a class="nav-link-chip {% if '/about/' in request.path %}active{% endif %}" href="/about/">About</a>
+                <a class="nav-link-chip {% if '/contacts/' in request.path %}active{% endif %}" href="/contacts/">Contact</a>
+                <a class="nav-link-chip {% if '/dashboard/' in request.path %}active{% endif %}" href="/dashboard/">Dashboard</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-link-chip {% if '/reports/' in request.path %}active{% endif %}" href="/reports/">Reports</a>
+                {% endif %}
+            </div>
+
+            <div class="hidden items-center gap-3 md:flex">
+                {% if user.is_authenticated %}
+                    <div class="flex items-center gap-3 rounded-full border border-slate-700 bg-slate-800/60 px-4 py-2">
+                        <span class="status-dot text-xs font-medium text-emerald-300">Online</span>
+                        <span class="text-sm text-slate-200">{{ user.username }}</span>
                     </div>
+                    <a href="{% url 'logout' %}" class="rounded-full border border-slate-700 bg-slate-800/70 px-5 py-3 text-sm font-medium text-slate-100 transition hover:bg-slate-700">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="rounded-full border border-slate-700 bg-slate-800/70 px-5 py-3 text-sm font-medium text-slate-100 transition hover:bg-slate-700">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div id="mobile-menu" class="site-nav mx-auto mt-3 hidden w-full max-w-7xl rounded-[1.25rem] px-4 py-4 md:hidden">
+            <div class="flex flex-col gap-2">
+                <a class="nav-link-chip {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
+                <a class="nav-link-chip {% if '/about/' in request.path %}active{% endif %}" href="/about/">About</a>
+                <a class="nav-link-chip {% if '/contacts/' in request.path %}active{% endif %}" href="/contacts/">Contact</a>
+                <a class="nav-link-chip {% if '/dashboard/' in request.path %}active{% endif %}" href="/dashboard/">Dashboard</a>
+                {% if user.is_authenticated %}
+                    <a class="nav-link-chip {% if '/reports/' in request.path %}active{% endif %}" href="/reports/">Reports</a>
+                    <a href="{% url 'logout' %}" class="mt-2 rounded-full border border-slate-700 bg-slate-800/70 px-5 py-3 text-center text-sm font-medium text-slate-100">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="button-primary mt-2 rounded-full px-5 py-3 text-center text-sm font-medium">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+        <div class="pointer-events-none fixed right-4 top-24 z-[70] flex w-[min(24rem,calc(100%-2rem))] flex-col gap-3 md:right-6">
+            {% for message in messages %}
+                <div class="message-toast pointer-events-auto rounded-2xl border bg-white px-4 py-4 text-sm shadow-2xl {% if message.tags == 'error' %}border-rose-200 text-rose-700{% elif message.tags == 'warning' %}border-amber-200 text-amber-700{% elif message.tags == 'success' %}border-emerald-200 text-emerald-700{% else %}border-blue-200 text-blue-700{% endif %}" data-toast>
+                    {{ message }}
                 </div>
             {% endfor %}
         </div>
     {% endif %}
 
-    <div class="card app-content-card p-3">
-        {% block content %}
-        {% endblock %}
-    </div>
+    <main class="px-3 pb-10 pt-6 md:px-6 md:pb-16 md:pt-8">
+        <div class="{% block content_wrap_class %}mx-auto w-full max-w-7xl{% endblock %}">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="px-3 pb-8 md:px-6">
+        <div class="surface-dark mx-auto w-full max-w-7xl rounded-[1.75rem] px-6 py-6">
+            <div class="flex flex-col gap-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+                <p class="mb-0">IET Smart City membantu pelaporan, verifikasi, dan monitoring infrastruktur kota dalam satu sistem terintegrasi.</p>
+                <p class="mb-0 text-slate-500">Built for modern civic operations.</p>
+            </div>
+        </div>
+    </footer>
 </div>
 
-<!-- ✅ Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.toast').forEach(function (el) {
-            const t = new bootstrap.Toast(el);
-            t.show();
+        const toggle = document.querySelector('[data-mobile-toggle]');
+        const menu = document.getElementById('mobile-menu');
+
+        if (toggle && menu) {
+            toggle.addEventListener('click', function () {
+                const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                toggle.setAttribute('aria-expanded', String(!expanded));
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        document.querySelectorAll('[data-toast]').forEach(function (toast, index) {
+            window.setTimeout(function () {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
+            }, 3200 + (index * 200));
+
+            window.setTimeout(function () {
+                toast.remove();
+            }, 3800 + (index * 200));
         });
+
+        const revealItems = document.querySelectorAll('[data-reveal]');
+        if (revealItems.length) {
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            revealItems.forEach(function (item) {
+                observer.observe(item);
+            });
+        }
     });
 </script>
-
+{% block extra_scripts %}{% endblock %}
 </body>
 </html>

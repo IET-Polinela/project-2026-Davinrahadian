@@ -1,520 +1,413 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block title %}IET Smart City | Homepage{% endblock %}
+
+{% block extra_head %}
 <style>
-    .home-hero {
+    .hero-panel {
         background:
-            linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(37, 99, 235, 0.92)),
-            radial-gradient(circle at 78% 12%, rgba(255, 255, 255, 0.26), transparent 28%),
-            linear-gradient(180deg, #0f766e, #2563eb);
-        border-radius: 8px;
-        color: #fff;
-        min-height: 560px;
-        overflow: hidden;
-        padding: 38px;
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.98));
         position: relative;
     }
 
-    .home-hero::before {
-        animation: gridDrift 18s linear infinite;
-        background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
-            linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
-        background-size: 56px 56px;
+    .hero-panel::after {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6));
         content: "";
         inset: 0;
-        opacity: 0.28;
+        pointer-events: none;
         position: absolute;
     }
 
-    .home-hero::after {
-        background:
-            linear-gradient(to top, rgba(15, 23, 42, 0.42), transparent 76%),
-            repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 22px, transparent 22px 36px);
-        bottom: 0;
-        content: "";
-        height: 132px;
-        left: 0;
-        opacity: 0.56;
-        position: absolute;
-        right: 0;
+    .panel-hover {
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .home-layout {
-        align-items: center;
-        display: grid;
-        gap: 28px;
-        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-        min-height: 390px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .home-hero-content {
-        max-width: 720px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .home-kicker {
-        color: rgba(255, 255, 255, 0.76);
-        font-weight: 800;
-        letter-spacing: 0.04em;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-    }
-
-    .home-title {
-        font-size: clamp(2rem, 5vw, 4.25rem);
-        font-weight: 900;
-        letter-spacing: 0;
-        line-height: 1.04;
-        margin: 0;
-    }
-
-    .home-copy {
-        color: rgba(255, 255, 255, 0.84);
-        font-size: 1.12rem;
-        line-height: 1.7;
-        margin: 18px 0 0;
-        max-width: 590px;
-    }
-
-    .home-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 28px;
-    }
-
-    .home-actions .btn {
-        border-radius: 999px;
-        font-weight: 800;
-        padding: 11px 18px;
-        transition: box-shadow 0.2s ease, transform 0.2s ease;
-    }
-
-    .home-actions .btn:hover {
-        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+    .panel-hover:hover {
+        border-color: #D1D5DB;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
         transform: translateY(-2px);
     }
 
-    .home-live-badge {
-        align-items: center;
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 999px;
-        color: rgba(255, 255, 255, 0.88);
-        display: inline-flex;
-        font-size: 0.82rem;
-        font-weight: 800;
-        gap: 8px;
-        padding: 8px 12px;
-    }
-
-    .home-live-badge::before {
-        animation: pulseDot 1.6s ease-in-out infinite;
-        background: #86efac;
-        border-radius: 999px;
-        box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.55);
-        content: "";
-        height: 8px;
-        width: 8px;
-    }
-
-    .city-panel {
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 8px;
-        box-shadow: 0 24px 54px rgba(15, 23, 42, 0.2);
-        min-height: 330px;
+    .soft-shimmer {
         overflow: hidden;
-        padding: 18px;
         position: relative;
     }
 
-    .city-panel::before {
-        animation: scanMove 4.8s ease-in-out infinite;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+    .soft-shimmer::after {
+        animation: shimmer 3.4s linear infinite;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.38), transparent);
         content: "";
-        height: 100%;
-        left: -44%;
+        inset: 0;
         position: absolute;
-        top: 0;
-        transform: skewX(-16deg);
-        width: 36%;
+        transform: translateX(-100%);
     }
 
-    .city-panel-header {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        position: relative;
-        z-index: 1;
+    .mini-chart-bar {
+        animation: chartRise 0.9s ease both;
+        animation-delay: var(--delay);
+        transform-origin: bottom;
     }
 
-    .city-panel-title {
-        font-size: 0.82rem;
-        font-weight: 900;
-        margin: 0;
-        text-transform: uppercase;
-    }
-
-    .city-panel-time {
-        color: rgba(255, 255, 255, 0.74);
-        font-size: 0.8rem;
-        font-weight: 800;
-    }
-
-    .city-map {
-        height: 170px;
-        margin-top: 18px;
-        position: relative;
-    }
-
-    .road {
-        background: rgba(255, 255, 255, 0.22);
-        border-radius: 999px;
-        height: 8px;
-        position: absolute;
-        transform-origin: left;
-    }
-
-    .road-one {
-        left: 12%;
-        top: 42%;
-        transform: rotate(18deg);
-        width: 72%;
-    }
-
-    .road-two {
-        left: 8%;
-        top: 68%;
-        transform: rotate(-10deg);
-        width: 84%;
-    }
-
-    .road-three {
-        left: 46%;
-        top: 14%;
-        transform: rotate(88deg);
-        width: 54%;
-    }
-
-    .map-node {
-        align-items: center;
-        animation: nodeFloat 3.2s ease-in-out infinite;
-        background: #fff;
-        border-radius: 999px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.2);
-        color: #2563eb;
-        display: flex;
-        font-size: 0.8rem;
-        font-weight: 900;
-        height: 38px;
-        justify-content: center;
-        position: absolute;
-        width: 38px;
-    }
-
-    .map-node:nth-of-type(4) {
-        animation-delay: 0.3s;
-        left: 18%;
-        top: 28%;
-    }
-
-    .map-node:nth-of-type(5) {
-        animation-delay: 0.8s;
-        left: 58%;
-        top: 10%;
-    }
-
-    .map-node:nth-of-type(6) {
-        animation-delay: 1.1s;
-        left: 72%;
-        top: 62%;
-    }
-
-    .workflow-card {
-        background: rgba(15, 23, 42, 0.22);
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        border-radius: 8px;
-        display: grid;
-        gap: 10px;
-        margin-top: 16px;
-        padding: 14px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .workflow-step {
-        align-items: center;
-        display: grid;
-        gap: 10px;
-        grid-template-columns: 30px minmax(0, 1fr) auto;
-    }
-
-    .step-dot {
-        align-items: center;
-        background: rgba(255, 255, 255, 0.16);
-        border: 1px solid rgba(255, 255, 255, 0.24);
-        border-radius: 999px;
-        display: inline-flex;
-        font-size: 0.72rem;
-        font-weight: 900;
-        height: 30px;
-        justify-content: center;
-        width: 30px;
-    }
-
-    .workflow-step strong {
-        display: block;
-        font-size: 0.88rem;
-        line-height: 1.1;
-    }
-
-    .workflow-step span {
-        color: rgba(255, 255, 255, 0.68);
-        display: block;
-        font-size: 0.76rem;
-        font-weight: 700;
-        margin-top: 2px;
-    }
-
-    .step-status {
-        background: rgba(134, 239, 172, 0.18);
-        border-radius: 999px;
-        color: #bbf7d0;
-        font-size: 0.7rem;
-        font-weight: 900;
-        padding: 5px 8px;
-    }
-
-    .home-stat-row {
-        display: grid;
-        gap: 14px;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        margin-top: 28px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .home-stat {
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 16px;
-        transform: translateY(0);
-        transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .home-stat:hover {
-        background: rgba(255, 255, 255, 0.18);
-        transform: translateY(-4px);
-    }
-
-    .home-stat-icon {
-        align-items: center;
-        background: rgba(255, 255, 255, 0.16);
-        border-radius: 8px;
-        display: flex;
-        font-size: 1.05rem;
-        font-weight: 900;
-        height: 36px;
-        justify-content: center;
-        margin-bottom: 14px;
-        width: 36px;
-    }
-
-    .home-stat strong {
-        display: block;
-        font-size: 1.28rem;
-        line-height: 1;
-    }
-
-    .home-stat span {
-        color: rgba(255, 255, 255, 0.74);
-        display: block;
-        font-size: 0.86rem;
-        font-weight: 700;
-        margin-top: 8px;
-    }
-
-    .animate-rise {
-        animation: riseIn 0.72s ease both;
-        animation-delay: var(--delay, 0s);
-    }
-
-    @media (max-width: 767.98px) {
-        .home-hero {
-            min-height: 0;
-            padding: 24px;
+    @keyframes shimmer {
+        to {
+            transform: translateX(100%);
         }
+    }
 
-        .home-layout {
-            grid-template-columns: 1fr;
+    @keyframes chartRise {
+        from {
+            opacity: 0;
+            transform: scaleY(0.35);
         }
-
-        .city-panel {
-            min-height: 300px;
-        }
-
-        .home-stat-row {
-            grid-template-columns: 1fr;
+        to {
+            opacity: 1;
+            transform: scaleY(1);
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .home-hero::before,
-        .home-live-badge::before,
-        .city-panel::before,
-        .map-node,
-        .animate-rise {
-            animation: none;
-        }
-
-        .home-actions .btn:hover,
-        .home-stat:hover {
-            transform: none;
-        }
-    }
-
-    @keyframes riseIn {
-        from {
-            opacity: 0;
-            transform: translateY(18px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes gridDrift {
-        from {
-            background-position: 0 0;
-        }
-        to {
-            background-position: 56px 56px;
-        }
-    }
-
-    @keyframes pulseDot {
-        0% {
-            box-shadow: 0 0 0 0 rgba(134, 239, 172, 0.55);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(134, 239, 172, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(134, 239, 172, 0);
-        }
-    }
-
-    @keyframes scanMove {
-        0%, 42% {
-            left: -44%;
-            opacity: 0;
-        }
-        56% {
-            opacity: 0.75;
-        }
-        100% {
-            left: 112%;
-            opacity: 0;
-        }
-    }
-
-    @keyframes nodeFloat {
-        0%, 100% {
-            transform: translateY(0);
-        }
-        50% {
-            transform: translateY(-8px);
+        .soft-shimmer::after,
+        .mini-chart-bar {
+            animation: none !important;
         }
     }
 </style>
+{% endblock %}
 
-<section class="home-hero">
-    <div class="home-layout">
-        <div class="home-hero-content animate-rise">
-            <div class="home-live-badge">Smart City Command Center</div>
-            <p class="home-kicker mt-4">IET Smart City</p>
-            <h1 class="home-title">Welcome to Smart City Reporting</h1>
-            <p class="home-copy">Laporkan masalah kota dengan mudah dan cepat, lalu pantau proses penanganannya dari satu sistem yang rapi, transparan, dan mudah dipakai.</p>
+{% block content %}
+<section class="hero-panel surface-card rounded-[2rem] px-6 py-7 md:px-8 md:py-9 xl:px-10 xl:py-10">
+    <div class="relative z-10 grid gap-10 xl:grid-cols-[minmax(0,0.86fr)_minmax(35rem,1.14fr)] xl:items-start">
+        <div class="pt-2" data-reveal>
+            <div class="mb-5 flex flex-wrap items-center gap-3">
+                <span class="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">IET Smart City</span>
+                <span class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">
+                    <span class="status-dot">System online</span>
+                </span>
+            </div>
 
-            <div class="home-actions">
+            <h1 class="max-w-2xl text-4xl font-semibold tracking-[-0.03em] text-slate-900 md:text-5xl xl:text-6xl">
+                Smart City Reporting Platform
+            </h1>
+            <p class="mt-5 max-w-xl text-base leading-8 text-slate-600 md:text-lg">
+                Sistem digital untuk membantu masyarakat melaporkan masalah kota secara cepat, transparan, dan terintegrasi.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-3">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'add_report' %}" class="btn btn-light text-primary">Buat Laporan</a>
-                    <a href="{% url 'report_list' %}" class="btn btn-outline-light">Lihat Laporan</a>
+                    <a href="{% url 'add_report' %}" class="button-primary rounded-full px-6 py-3 text-sm font-medium">Buat Laporan</a>
+                    <a href="/dashboard/" class="button-secondary rounded-full px-6 py-3 text-sm font-medium">Dashboard</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-light text-primary">Login</a>
-                    <a href="{% url 'register' %}" class="btn btn-outline-light">Daftar Citizen</a>
+                    <a href="{% url 'login' %}" class="button-primary rounded-full px-6 py-3 text-sm font-medium">Buat Laporan</a>
+                    <a href="/dashboard/" class="button-secondary rounded-full px-6 py-3 text-sm font-medium">Dashboard</a>
                 {% endif %}
             </div>
-        </div>
 
-        <div class="city-panel animate-rise" style="--delay: 0.14s;">
-            <div class="city-panel-header">
-                <p class="city-panel-title">Live Report Flow</p>
-                <span class="city-panel-time">Today</span>
-            </div>
-
-            <div class="city-map" aria-hidden="true">
-                <span class="road road-one"></span>
-                <span class="road road-two"></span>
-                <span class="road road-three"></span>
-                <span class="map-node">01</span>
-                <span class="map-node">02</span>
-                <span class="map-node">03</span>
-            </div>
-
-            <div class="workflow-card">
-                <div class="workflow-step">
-                    <span class="step-dot">1</span>
-                    <div>
-                        <strong>Report masuk</strong>
-                        <span>Warga mengirim detail lokasi dan masalah</span>
-                    </div>
-                    <span class="step-status">Live</span>
+            <div class="mt-10 grid gap-4 sm:grid-cols-3">
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm text-slate-500">Total laporan</p>
+                    <p class="mb-1 text-3xl font-semibold text-slate-900" data-count-up="{{ total_reports|default:0 }}">{{ total_reports|default:0 }}</p>
+                    <p class="mb-0 text-xs text-slate-500">Tercatat dari kanal pelaporan warga</p>
                 </div>
-                <div class="workflow-step">
-                    <span class="step-dot">2</span>
-                    <div>
-                        <strong>Verifikasi admin</strong>
-                        <span>Data dicek sebelum ditindaklanjuti</span>
-                    </div>
-                    <span class="step-status">Track</span>
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm text-slate-500">Warga aktif</p>
+                    <p class="mb-1 text-3xl font-semibold text-slate-900" data-count-up="{{ active_citizens|default:0 }}">{{ active_citizens|default:0 }}</p>
+                    <p class="mb-0 text-xs text-slate-500">Pengguna yang terlibat dalam pelaporan</p>
                 </div>
-                <div class="workflow-step">
-                    <span class="step-dot">3</span>
-                    <div>
-                        <strong>Status selesai</strong>
-                        <span>Progres penanganan tampil di dashboard</span>
-                    </div>
-                    <span class="step-status">Done</span>
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm text-slate-500">Uptime sistem</p>
+                    <p class="mb-1 text-3xl font-semibold text-slate-900">{{ system_uptime }}</p>
+                    <p class="mb-0 text-xs text-slate-500">Ketersediaan layanan terpantau stabil</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="home-stat-row">
-        <div class="home-stat animate-rise" style="--delay: 0.24s;">
-            <div class="home-stat-icon">01</div>
-            <strong>Cepat</strong>
-            <span>Input laporan warga dengan alur sederhana dan langsung tercatat.</span>
-        </div>
-        <div class="home-stat animate-rise" style="--delay: 0.32s;">
-            <div class="home-stat-icon">02</div>
-            <strong>Terpantau</strong>
-            <span>Status penanganan jelas dari reported sampai resolved.</span>
-        </div>
-        <div class="home-stat animate-rise" style="--delay: 0.4s;">
-            <div class="home-stat-icon">03</div>
-            <strong>Terpusat</strong>
-            <span>Data laporan kota terkumpul rapi untuk admin dan warga.</span>
+        <div data-reveal>
+            <div class="surface-dark rounded-[1.75rem] p-4 md:p-5">
+                <div class="mb-5 flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div>
+                        <p class="mb-1 text-sm font-medium text-slate-100">Dashboard preview</p>
+                        <p class="mb-0 text-sm text-slate-400">Ringkasan operasional pelaporan kota</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                        <span class="text-xs text-slate-400">Realtime</span>
+                    </div>
+                </div>
+
+                <div class="grid gap-4 xl:grid-cols-[1.08fr_0.92fr]">
+                    <div class="rounded-[1.35rem] border border-slate-800 bg-slate-950/60 p-4">
+                        <div class="mb-4 flex items-start justify-between">
+                            <div>
+                                <p class="mb-1 text-sm font-medium text-slate-100">Overview</p>
+                                <p class="mb-0 text-xs text-slate-500">Volume dan status laporan mingguan</p>
+                            </div>
+                            <span class="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300">Updated today</span>
+                        </div>
+
+                        <div class="grid gap-3 sm:grid-cols-3">
+                            <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
+                                <p class="mb-1 text-xs text-slate-500">Masuk</p>
+                                <p class="mb-0 text-xl font-semibold text-white">{{ total_reports }}</p>
+                            </div>
+                            <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
+                                <p class="mb-1 text-xs text-slate-500">Diproses</p>
+                                <p class="mb-0 text-xl font-semibold text-white">{{ in_progress_reports }}</p>
+                            </div>
+                            <div class="rounded-xl border border-slate-800 bg-slate-900/80 p-3">
+                                <p class="mb-1 text-xs text-slate-500">Selesai</p>
+                                <p class="mb-0 text-xl font-semibold text-white">{{ resolved_reports }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 rounded-[1.15rem] border border-slate-800 bg-slate-900/70 p-4">
+                            <div class="mb-3 flex items-center justify-between">
+                                <p class="mb-0 text-sm font-medium text-slate-100">Laporan per hari</p>
+                                <span class="text-xs text-slate-500">7 hari</span>
+                            </div>
+                            <div class="flex h-36 items-end gap-2">
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-slate-700" style="height: 34%; --delay: 0.05s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-slate-600" style="height: 48%; --delay: 0.1s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-blue-800/80" style="height: 44%; --delay: 0.15s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-blue-700/80" style="height: 66%; --delay: 0.2s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-blue-600/85" style="height: 58%; --delay: 0.25s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-blue-500/85" style="height: 74%; --delay: 0.3s;"></span>
+                                <span class="mini-chart-bar w-full rounded-t-lg bg-blue-600/85" style="height: 69%; --delay: 0.35s;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="rounded-[1.35rem] border border-slate-800 bg-slate-950/60 p-4">
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <p class="mb-1 text-sm font-medium text-slate-100">Realtime monitoring</p>
+                                    <p class="mb-0 text-xs text-slate-500">Status layanan inti</p>
+                                </div>
+                                <span class="text-xs text-emerald-300">Healthy</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="mb-2 flex items-center justify-between text-sm">
+                                        <span class="text-slate-400">AI verification</span>
+                                        <span class="text-slate-200">{{ ai_detection }}%</span>
+                                    </div>
+                                    <div class="soft-shimmer h-2 rounded-full bg-slate-800">
+                                        <div class="h-full rounded-full bg-blue-500" style="width: {{ ai_detection }}%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="mb-2 flex items-center justify-between text-sm">
+                                        <span class="text-slate-400">Resolution rate</span>
+                                        <span class="text-slate-200">{{ resolution_rate }}%</span>
+                                    </div>
+                                    <div class="soft-shimmer h-2 rounded-full bg-slate-800">
+                                        <div class="h-full rounded-full bg-blue-400" style="width: {{ resolution_rate }}%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="mb-2 flex items-center justify-between text-sm">
+                                        <span class="text-slate-400">Average response</span>
+                                        <span class="text-slate-200">{{ response_time }} min</span>
+                                    </div>
+                                    <div class="soft-shimmer h-2 rounded-full bg-slate-800">
+                                        <div class="h-full rounded-full bg-slate-500" style="width: 72%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-[1.35rem] border border-slate-800 bg-slate-950/60 p-4">
+                            <div class="mb-4 flex items-center justify-between">
+                                <div>
+                                    <p class="mb-1 text-sm font-medium text-slate-100">Activity feed</p>
+                                    <p class="mb-0 text-xs text-slate-500">Aktivitas operasional terbaru</p>
+                                </div>
+                                <span class="text-xs text-slate-500">Live feed</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex gap-3">
+                                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-400"></span>
+                                    <div>
+                                        <p class="mb-1 text-sm text-slate-200">Laporan baru masuk ke antrean verifikasi.</p>
+                                        <p class="mb-0 text-xs text-slate-500">2 menit lalu</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                                    <div>
+                                        <p class="mb-1 text-sm text-slate-200">Status tindak lanjut diperbarui oleh admin.</p>
+                                        <p class="mb-0 text-xs text-slate-500">12 menit lalu</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3">
+                                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-slate-500"></span>
+                                    <div>
+                                        <p class="mb-1 text-sm text-slate-200">Monitoring sistem mendeteksi beban normal.</p>
+                                        <p class="mb-0 text-xs text-slate-500">31 menit lalu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<section class="mt-8 grid gap-4 lg:grid-cols-4" data-reveal>
+    <article class="surface-card panel-hover rounded-[1.25rem] p-5">
+        <p class="mb-2 text-sm text-slate-500">Monitoring system</p>
+        <p class="mb-1 text-2xl font-semibold text-slate-900">{{ system_uptime }}</p>
+        <p class="mb-0 text-sm text-slate-500">Ketersediaan layanan dan stabilitas operasional.</p>
+    </article>
+    <article class="surface-card panel-hover rounded-[1.25rem] p-5">
+        <p class="mb-2 text-sm text-slate-500">Laporan terverifikasi</p>
+        <p class="mb-1 text-2xl font-semibold text-slate-900">{{ verified_reports }}</p>
+        <p class="mb-0 text-sm text-slate-500">Sudah melewati proses verifikasi awal sistem.</p>
+    </article>
+    <article class="surface-card panel-hover rounded-[1.25rem] p-5">
+        <p class="mb-2 text-sm text-slate-500">Respon rata-rata</p>
+        <p class="mb-1 text-2xl font-semibold text-slate-900">{{ response_time }} menit</p>
+        <p class="mb-0 text-sm text-slate-500">Estimasi waktu dari intake ke peninjauan operator.</p>
+    </article>
+    <article class="surface-card panel-hover rounded-[1.25rem] p-5">
+        <p class="mb-2 text-sm text-slate-500">Citizen participation</p>
+        <p class="mb-1 text-2xl font-semibold text-slate-900">{{ active_citizens }}</p>
+        <p class="mb-0 text-sm text-slate-500">Partisipasi warga aktif dalam kanal pelaporan digital.</p>
+    </article>
+</section>
+
+<section class="mt-10 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+    <div class="surface-card rounded-[1.5rem] p-5 md:p-6" data-reveal>
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="mb-1 text-2xl font-semibold text-slate-900">Laporan terbaru</h2>
+                <p class="mb-0 text-sm text-slate-500">Ringkasan laporan yang baru masuk dan sedang ditindaklanjuti.</p>
+            </div>
+            <a href="/reports/" class="button-secondary rounded-full px-4 py-2 text-sm font-medium">Lihat semua</a>
+        </div>
+
+        <div class="overflow-hidden rounded-[1rem] border border-slate-200 bg-white">
+            <div class="hidden grid-cols-[1.6fr_1fr_1fr_1fr] gap-4 bg-slate-50 px-4 py-3 text-xs font-medium uppercase tracking-[0.08em] text-slate-500 md:grid">
+                <span>Judul</span>
+                <span>Kategori</span>
+                <span>Status</span>
+                <span>Tanggal</span>
+            </div>
+            <div class="divide-y divide-slate-200">
+                {% for report in recent_reports %}
+                    <div class="grid gap-3 px-4 py-4 md:grid-cols-[1.6fr_1fr_1fr_1fr] md:items-center">
+                        <div>
+                            <p class="mb-1 text-sm font-medium text-slate-900">{{ report.title }}</p>
+                            <p class="mb-0 text-xs text-slate-500">{{ report.location }}</p>
+                        </div>
+                        <div class="text-sm text-slate-600">{{ report.category }}</div>
+                        <div>
+                            <span class="rounded-full px-3 py-1 text-xs font-medium {% if report.status == 'RESOLVED' %}bg-emerald-50 text-emerald-700{% elif report.status == 'IN_PROGRESS' %}bg-amber-50 text-amber-700{% elif report.status == 'VERIFIED' %}bg-blue-50 text-blue-700{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="text-sm text-slate-500">{{ report.created_at|date:"d M Y" }}</div>
+                    </div>
+                {% empty %}
+                    <div class="px-4 py-8 text-center text-sm text-slate-500">
+                        Belum ada laporan terbaru.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-6" data-reveal>
+        <div class="surface-card rounded-[1.5rem] p-5 md:p-6">
+            <div class="mb-5 flex items-center justify-between">
+                <div>
+                    <h2 class="mb-1 text-xl font-semibold text-slate-900">Alur penanganan</h2>
+                    <p class="mb-0 text-sm text-slate-500">Proses kerja yang sederhana dan mudah dipahami.</p>
+                </div>
+                <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">4 tahap</span>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">1</div>
+                    <div>
+                        <p class="mb-1 text-sm font-medium text-slate-900">Citizen report</p>
+                        <p class="mb-0 text-sm text-slate-500">Warga mengirim laporan melalui platform.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">2</div>
+                    <div>
+                        <p class="mb-1 text-sm font-medium text-slate-900">AI verification</p>
+                        <p class="mb-0 text-sm text-slate-500">Sistem membantu validasi awal dan klasifikasi laporan.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">3</div>
+                    <div>
+                        <p class="mb-1 text-sm font-medium text-slate-900">Admin validation</p>
+                        <p class="mb-0 text-sm text-slate-500">Admin meninjau dan meneruskan ke tim terkait.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">4</div>
+                    <div>
+                        <p class="mb-1 text-sm font-medium text-slate-900">Resolved</p>
+                        <p class="mb-0 text-sm text-slate-500">Status akhir tercatat dan dapat dipantau warga.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card rounded-[1.5rem] p-5 md:p-6">
+            <div class="mb-5">
+                <h2 class="mb-1 text-xl font-semibold text-slate-900">Fitur inti</h2>
+                <p class="mb-0 text-sm text-slate-500">Dirancang untuk kebutuhan operasional yang nyata.</p>
+            </div>
+            <div class="grid gap-3">
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm font-medium text-slate-900">Realtime monitoring</p>
+                    <p class="mb-0 text-sm text-slate-500">Pantau kondisi laporan dan status layanan dalam satu tampilan.</p>
+                </div>
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm font-medium text-slate-900">Dashboard warga</p>
+                    <p class="mb-0 text-sm text-slate-500">Memberi transparansi terhadap proses penanganan laporan.</p>
+                </div>
+                <div class="surface-muted panel-hover rounded-[1rem] p-4">
+                    <p class="mb-1 text-sm font-medium text-slate-900">Secure administration</p>
+                    <p class="mb-0 text-sm text-slate-500">Alur pengelolaan laporan dibatasi sesuai peran pengguna.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const countItems = document.querySelectorAll('[data-count-up]');
+
+        countItems.forEach(function (item) {
+            const target = Number(item.getAttribute('data-count-up')) || 0;
+            const duration = 1000;
+            const startAt = performance.now();
+
+            function frame(now) {
+                const progress = Math.min((now - startAt) / duration, 1);
+                const value = Math.floor(target * (1 - Math.pow(1 - progress, 3)));
+                item.textContent = value.toLocaleString('en-US');
+
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                }
+            }
+
+            requestAnimationFrame(frame);
+        });
+    });
+</script>
 {% endblock %}

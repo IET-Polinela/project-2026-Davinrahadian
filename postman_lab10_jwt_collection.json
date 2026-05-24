@@ -1,0 +1,220 @@
+{
+  "info": {
+    "name": "Lab 10 JWT Smart City",
+    "_postman_id": "c7cbd249-cfe7-4526-b648-8604447a9955",
+    "description": "Simple collection for register, JWT login, report CRUD, and forbidden delete testing.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "report_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Register Citizen",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"citizen_lab10\",\n  \"email\": \"citizen@example.com\",\n  \"password\": \"lab10pass123\",\n  \"password_confirm\": \"lab10pass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/register/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "register",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Login JWT",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"citizen_lab10\",\n  \"password\": \"lab10pass123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/token/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "token",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/token/refresh/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "token",
+            "refresh",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. GET Reports",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/reports/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "5. POST Report",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Jalan berlubang di pusat kota\",\n  \"category\": \"Jalan Rusak\",\n  \"location\": \"Jl. Merdeka No. 10\",\n  \"description\": \"Lubang jalan cukup besar dan membahayakan kendaraan.\",\n  \"status\": \"DRAFT\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/reports/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "6. PUT Report",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Jalan berlubang di pusat kota - diperbarui\",\n  \"category\": \"Jalan Rusak\",\n  \"location\": \"Jl. Merdeka No. 10\",\n  \"description\": \"Lubang jalan masih belum diperbaiki dan semakin besar.\",\n  \"status\": \"DRAFT\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/reports/{{report_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "{{report_id}}",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "7. DELETE Report Forbidden",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/reports/{{report_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "reports",
+            "{{report_id}}",
+            ""
+          ]
+        }
+      }
+    }
+  ]
+}
