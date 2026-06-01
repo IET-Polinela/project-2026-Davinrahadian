@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart City Citizen Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --sc-bg: #f5f7fb;
+            --sc-text: #111827;
+            --sc-muted: #6b7280;
+            --sc-border: #e5e7eb;
+            --sc-primary: #2563eb;
+            --sc-navy: #0f172a;
+        }
+
+        body {
+            background: var(--sc-bg);
+            color: var(--sc-text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-height: 100vh;
+        }
+
+        .app-navbar {
+            background: var(--sc-navy);
+        }
+
+        .portal-card {
+            background: #fff;
+            border: 1px solid var(--sc-border);
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        .dashboard-panel {
+            background: #fff;
+            border: 1px solid var(--sc-border);
+            border-radius: 8px;
+        }
+
+        .small-muted {
+            color: var(--sc-muted);
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            background: #10b981;
+            border-radius: 999px;
+            display: inline-block;
+            height: 0.55rem;
+            width: 0.55rem;
+        }
+
+        .metric-value {
+            color: var(--sc-text);
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .login-shell {
+            min-height: calc(100vh - 76px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
+        <div class="container">
+            <a class="navbar-brand fw-semibold" href="#dashboard">
+                <i class="bi bi-buildings me-2"></i>Smart City Citizen Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" type="button" id="logoutButton">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app" class="container py-4"></main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/router.js"></script>
+</body>
+</html>

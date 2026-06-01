@@ -49,6 +49,7 @@ AUTH_USER_MODEL = 'usermanagement_24782084.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'main_app.middleware.LocalCORSMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
