@@ -6,6 +6,7 @@ from usermanagement_24782084.models import User
 
 class ReportSerializer(serializers.ModelSerializer):
     reporter = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
@@ -17,12 +18,17 @@ class ReportSerializer(serializers.ModelSerializer):
             'location',
             'description',
             'status',
+            'is_owner',
             'created_at',
             'updated_at',
         ]
 
     def get_reporter(self, obj):
         return 'Warga Anonim'
+
+    def get_is_owner(self, obj):
+        request = self.context.get('request')
+        return bool(request and request.user.is_authenticated and obj.reporter_id == request.user.id)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
