@@ -26,8 +26,6 @@ SECRET_KEY = 'django-insecure-r)p$5yt!%3yg%_gdi4@u@17g9w!u_xt2el-=ap1&#)(ev0_e(+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -81,8 +79,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'smartcity_app.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# Lab 13 deployment configuration
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     'default': {
@@ -94,6 +92,9 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # Password validation
@@ -150,9 +151,4 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': False,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
-
-
-# Lab 13 deployment configuration
-CORS_ALLOW_ALL_ORIGINS = True
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
