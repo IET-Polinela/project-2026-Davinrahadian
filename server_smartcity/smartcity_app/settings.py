@@ -94,6 +94,9 @@ DATABASES = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://103.151.63.88:8003",
+]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
