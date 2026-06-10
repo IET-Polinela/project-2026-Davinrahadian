@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+.venv/
+env/
+
+.env
+db.sqlite3
+server_smartcity/db.sqlite3
+
+staticfiles/
+server_smartcity/staticfiles/
+
+node_modules/
