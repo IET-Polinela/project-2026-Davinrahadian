@@ -14,6 +14,9 @@
             --sc-border: #e5e7eb;
             --sc-primary: #2563eb;
             --sc-navy: #0f172a;
+            --sc-shadow-soft: 0 12px 30px rgba(15, 23, 42, 0.08);
+            --sc-shadow-hover: 0 18px 40px rgba(15, 23, 42, 0.12);
+            --sc-transition: 180ms ease;
         }
 
         body {
@@ -31,13 +34,23 @@
             background: #fff;
             border: 1px solid var(--sc-border);
             border-radius: 8px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            box-shadow: var(--sc-shadow-soft);
+            transition: border-color var(--sc-transition), box-shadow var(--sc-transition), transform var(--sc-transition);
         }
 
         .dashboard-panel {
             background: #fff;
             border: 1px solid var(--sc-border);
             border-radius: 8px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+            transition: border-color var(--sc-transition), box-shadow var(--sc-transition), transform var(--sc-transition);
+        }
+
+        .portal-card:hover,
+        .dashboard-panel:hover {
+            border-color: #d7dde8;
+            box-shadow: var(--sc-shadow-hover);
+            transform: translateY(-1px);
         }
 
         .small-muted {
@@ -46,6 +59,7 @@
         }
 
         .status-dot {
+            animation: statusPulse 2.4s ease-in-out infinite;
             background: #10b981;
             border-radius: 999px;
             display: inline-block;
@@ -70,6 +84,128 @@
 
         .cursor-pointer {
             cursor: pointer;
+        }
+
+        .page-enter {
+            animation: fadeInPage 360ms ease both;
+        }
+
+        .page-enter-delay {
+            animation-delay: 70ms;
+        }
+
+        .motion-card {
+            animation: slideUpCard 320ms ease both;
+        }
+
+        .motion-card:nth-child(2) {
+            animation-delay: 45ms;
+        }
+
+        .motion-card:nth-child(3) {
+            animation-delay: 90ms;
+        }
+
+        .report-item {
+            border-radius: 10px;
+            margin-left: -0.35rem;
+            margin-right: -0.35rem;
+            padding-left: 0.35rem;
+            padding-right: 0.35rem;
+            transition: background-color var(--sc-transition), box-shadow var(--sc-transition), transform var(--sc-transition);
+        }
+
+        .report-item:hover {
+            background: #f8fafc;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            transition: background-color var(--sc-transition), border-color var(--sc-transition), box-shadow var(--sc-transition), color var(--sc-transition), transform var(--sc-transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+        }
+
+        .btn-outline-danger:hover,
+        .btn-outline-primary:hover,
+        .btn-success:hover {
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+        }
+
+        .badge {
+            transition: transform var(--sc-transition), box-shadow var(--sc-transition);
+        }
+
+        .badge:hover {
+            transform: translateY(-1px);
+        }
+
+        .progress-bar {
+            transition: width 420ms ease;
+        }
+
+        .modal-content {
+            border: 1px solid var(--sc-border);
+            border-radius: 12px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.20);
+        }
+
+        .modal.fade .modal-dialog {
+            transform: translateY(10px) scale(0.99);
+            transition: transform 220ms ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: none;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUpCard {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes statusPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.18);
+            }
+            50% {
+                box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>

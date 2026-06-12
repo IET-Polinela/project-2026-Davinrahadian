@@ -17,7 +17,7 @@ function escapeHtml(value) {
 
 function renderLoginPage() {
     app.innerHTML = `
-        <section class="row justify-content-center align-items-center login-shell">
+        <section class="row justify-content-center align-items-center login-shell page-enter">
             <div class="col-12 col-md-8 col-lg-5 col-xl-4">
                 <div class="portal-card p-4">
                     <div class="mb-4">
@@ -89,7 +89,7 @@ async function renderDashboardPage() {
     currentPage = 1;
 
     app.innerHTML = `
-        <section class="mb-4">
+        <section class="mb-4 page-enter">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                 <div>
                     <p class="small-muted mb-1">Dashboard Citizen</p>
@@ -103,9 +103,9 @@ async function renderDashboardPage() {
             </div>
         </section>
 
-        <section class="row g-3">
+        <section class="row g-3 page-enter page-enter-delay">
             <aside class="col-12 col-lg-3">
-                <div class="dashboard-panel p-3 h-100">
+                <div class="dashboard-panel motion-card p-3 h-100">
                     <h2 class="h6 fw-bold mb-3">Akun</h2>
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
@@ -142,7 +142,7 @@ async function renderDashboardPage() {
             </aside>
 
             <main class="col-12 col-lg-6">
-                <div class="dashboard-panel p-3 mb-3">
+                <div class="dashboard-panel motion-card p-3 mb-3">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
                             <h2 class="h6 fw-bold mb-1">Ringkasan Laporan Saya</h2>
@@ -172,7 +172,7 @@ async function renderDashboardPage() {
                     </div>
                 </div>
 
-                <div class="dashboard-panel p-3">
+                <div class="dashboard-panel motion-card p-3">
                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
                         <h2 class="h6 fw-bold mb-0">Daftar Laporan</h2>
                         <div class="btn-group btn-group-sm">
@@ -190,7 +190,7 @@ async function renderDashboardPage() {
             </main>
 
             <aside class="col-12 col-lg-3">
-                <div class="dashboard-panel p-3 h-100">
+                <div class="dashboard-panel motion-card p-3 h-100">
                     <h2 class="h6 fw-bold mb-3">Status Sistem</h2>
                     <div class="list-group list-group-flush">
                         <div class="list-group-item px-0 d-flex justify-content-between">
@@ -330,7 +330,7 @@ function renderReportCard(report) {
     ` : "";
 
     return `
-        <article class="border-top py-3">
+        <article class="report-item border-top py-3">
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                 <div>
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
